@@ -285,20 +285,6 @@ export default class LayerSwitcher extends Control {
     static setOpacity_(map, lyr, visible, groupSelectStyle) {
         console.log(lyr.get('title'), parseFloat(visible.value), groupSelectStyle);
         lyr.setOpacity(parseFloat(visible.value));
-        // lyr.setOpacity(parseFloat(this.value));
-        // if (visible && lyr.get('type') === 'base') {
-        //     // Hide all other base layers regardless of grouping
-        //     LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
-        //         if (l != lyr && l.get('type') === 'base') {
-        //             l.setVisible(false);
-        //         }
-        //     });
-        // }
-        // if (lyr.getLayers && !lyr.get('combine') && groupSelectStyle === 'children') {
-        //     lyr.getLayers().forEach(l => {
-        //         LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
-        //     });
-        // }
     }
 
 
@@ -311,7 +297,7 @@ export default class LayerSwitcher extends Control {
     */
     static renderLayer_(map, lyr, idx, options, render) {
       
-        console.log('renderLayer_');
+        // console.log('renderLayer_');
         
         var li = document.createElement('li');
 
@@ -402,15 +388,31 @@ export default class LayerSwitcher extends Control {
             opacity.max = '1';
             opacity.step = '0.1'
             opacity.name = checkboxId;
-            console.log(lyr.get('opacity'));
             opacity.value = String(lyr.get('opacity'));
-            // opacity.value = lyr.get('opacity');
-            // input.indeterminate = lyr.get('indeterminate');
             opacity.onchange = function(e) {
                 LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-                // render(lyr);
             };
             li.appendChild(opacity);
+
+
+            // console.log(lyr.getSource().getUrls());            
+            var lyrUrl = lyr.getSource().getUrls();
+            console.log(lyrUrl[0]);
+            var wmsSource = new ol.source.ImageWMS({
+              url: lyrUrl[0],
+              // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+              params: {'LAYERS': lyr.Name},
+              ratio: 1,
+              serverType: 'qgis'
+            });
+            var graphicUrl = wmsSource.getLegendUrl();
+            // console.log(graphicUrl);
+
+            const legend = document.createElement('img');
+            // var img = document.getElementById('testimage');
+            legend.src = graphicUrl;
+
+            li.appendChild(legend);
 
         }
 
