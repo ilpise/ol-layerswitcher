@@ -404,6 +404,36 @@ var LayerSwitcher = function (_Control) {
         }
 
         /**
+        * **Static** Opacity of a layer.
+        * Takes care of hiding other layers in the same exclusive group if the layer
+        * is toggle to visible.
+        * @private
+        * @param {ol/Map~Map} map The map instance.
+        * @param {ol/layer/Base~BaseLayer} The layer whose visibility will be toggled.
+        */
+
+    }, {
+        key: 'setOpacity_',
+        value: function setOpacity_(map, lyr, visible, groupSelectStyle) {
+            console.log(lyr.get('title'), parseFloat(visible.value), groupSelectStyle);
+            lyr.setOpacity(parseFloat(visible.value));
+            // lyr.setOpacity(parseFloat(this.value));
+            // if (visible && lyr.get('type') === 'base') {
+            //     // Hide all other base layers regardless of grouping
+            //     LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
+            //         if (l != lyr && l.get('type') === 'base') {
+            //             l.setVisible(false);
+            //         }
+            //     });
+            // }
+            // if (lyr.getLayers && !lyr.get('combine') && groupSelectStyle === 'children') {
+            //     lyr.getLayers().forEach(l => {
+            //         LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
+            //     });
+            // }
+        }
+
+        /**
         * **Static** Render all layers that are children of a group.
         * @private
         * @param {ol/Map~Map} map The map instance.
@@ -414,6 +444,8 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'renderLayer_',
         value: function renderLayer_(map, lyr, idx, options, render) {
+
+            console.log('renderLayer_');
 
             var li = document.createElement('li');
 
@@ -428,6 +460,10 @@ var LayerSwitcher = function (_Control) {
                 var isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
 
                 li.classList.add('group');
+
+                // 
+                // li.appendChild('<span style="margin-left: 8px;"><i class="fas fa-layer-group"></i></span>');
+
                 if (isBaseGroup) {
                     li.classList.add(CSS_PREFIX + 'base-group');
                 }
@@ -459,6 +495,7 @@ var LayerSwitcher = function (_Control) {
 
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
+
                 var ul = document.createElement('ul');
                 li.appendChild(ul);
 
@@ -491,6 +528,22 @@ var LayerSwitcher = function (_Control) {
                 }
 
                 li.appendChild(label);
+
+                var opacity = document.createElement('input');
+                opacity.type = 'range';
+                opacity.min = '0';
+                opacity.max = '1';
+                opacity.step = '0.1';
+                opacity.name = checkboxId;
+                console.log(lyr.get('opacity'));
+                opacity.value = String(lyr.get('opacity'));
+                // opacity.value = lyr.get('opacity');
+                // input.indeterminate = lyr.get('indeterminate');
+                opacity.onchange = function (e) {
+                    LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                    // render(lyr);
+                };
+                li.appendChild(opacity);
             }
 
             return li;
