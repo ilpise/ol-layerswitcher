@@ -415,7 +415,6 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'setOpacity_',
         value: function setOpacity_(map, lyr, visible, groupSelectStyle) {
-            console.log(lyr.get('title'), parseFloat(visible.value), groupSelectStyle);
             lyr.setOpacity(parseFloat(visible.value));
         }
 
@@ -441,8 +440,8 @@ var LayerSwitcher = function (_Control) {
 
             var label = document.createElement('label');
 
+            // console.log(lyr.getLayers);
             if (lyr.getLayers && !lyr.get('combine')) {
-
                 var isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
 
                 li.classList.add('group');
@@ -459,6 +458,7 @@ var LayerSwitcher = function (_Control) {
                     li.classList.add(CSS_PREFIX + 'fold');
                     li.classList.add(CSS_PREFIX + lyr.get('fold'));
                     var btn = document.createElement('button');
+                    btn.className = 'arrow';
                     btn.onclick = function (e) {
                         LayerSwitcher.toggleFold_(lyr, li);
                     };
@@ -493,29 +493,55 @@ var LayerSwitcher = function (_Control) {
                 if (lyr.get('type') === 'base') {
                     input.type = 'radio';
                     input.name = 'base';
+                    input.id = checkboxId;
+                    input.checked = lyr.get('visible');
+                    input.indeterminate = lyr.get('indeterminate');
+                    input.onchange = function (e) {
+                        LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                        render(lyr);
+                    };
+                    li.appendChild(input);
+
+                    label.htmlFor = checkboxId;
+                    label.innerHTML = lyrTitle;
+
+                    var rsl = map.getView().getResolution();
+                    if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+                        label.className += ' disabled';
+                    }
+
+                    li.appendChild(label);
                 } else {
+                    var _btn = document.createElement('button');
+                    _btn.setAttribute("data-target", "#tg" + checkboxId);
+                    _btn.setAttribute("data-toggle", "collapse");
+                    _btn.className = 'btn btn-primary legend';
+                    li.appendChild(_btn);
+
                     input.type = 'checkbox';
-                }
-                input.id = checkboxId;
-                input.checked = lyr.get('visible');
-                input.indeterminate = lyr.get('indeterminate');
-                input.onchange = function (e) {
-                    LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
-                    render(lyr);
-                };
-                li.appendChild(input);
 
-                label.htmlFor = checkboxId;
-                label.innerHTML = lyrTitle;
+                    input.id = checkboxId;
+                    input.checked = lyr.get('visible');
+                    input.indeterminate = lyr.get('indeterminate');
+                    input.onchange = function (e) {
+                        LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                        render(lyr);
+                    };
+                    li.appendChild(input);
 
-                var rsl = map.getView().getResolution();
-                if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-                    label.className += ' disabled';
-                }
+                    label.htmlFor = checkboxId;
+                    label.innerHTML = lyrTitle;
 
-                li.appendChild(label);
+                    var rsl = map.getView().getResolution();
+                    if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+                        label.className += ' disabled';
+                    }
 
-                if (lyr.get('type') !== 'base') {
+                    li.appendChild(label);
+
+                    var opWrapper = document.createElement('div');
+                    opWrapper.id = 'tg' + checkboxId;
+                    opWrapper.className = 'collapse';
                     var opacity = document.createElement('input');
                     opacity.type = 'range';
                     opacity.min = '0';
@@ -526,11 +552,12 @@ var LayerSwitcher = function (_Control) {
                     opacity.onchange = function (e) {
                         LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
                     };
-                    li.appendChild(opacity);
+                    opWrapper.appendChild(opacity);
+                    // li.appendChild(opWrapper);
 
-                    // console.log(lyr.getSource().getUrls());            
+
                     var lyrUrl = lyr.getSource().getUrls();
-                    console.log(lyrUrl[0]);
+
                     var wmsSource = new ol.source.ImageWMS({
                         url: lyrUrl[0],
                         // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
@@ -545,7 +572,9 @@ var LayerSwitcher = function (_Control) {
                     // var img = document.getElementById('testimage');
                     legend.src = graphicUrl;
 
-                    li.appendChild(legend);
+                    opWrapper.appendChild(legend);
+
+                    li.appendChild(opWrapper);
                 }
             }
 

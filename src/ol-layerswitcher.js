@@ -283,7 +283,6 @@ export default class LayerSwitcher extends Control {
     * @param {ol/layer/Base~BaseLayer} The layer whose visibility will be toggled.
     */
     static setOpacity_(map, lyr, visible, groupSelectStyle) {
-        console.log(lyr.get('title'), parseFloat(visible.value), groupSelectStyle);
         lyr.setOpacity(parseFloat(visible.value));
     }
 
@@ -307,8 +306,8 @@ export default class LayerSwitcher extends Control {
 
         var label = document.createElement('label');
 
+        // console.log(lyr.getLayers);
         if (lyr.getLayers && !lyr.get('combine')) {
-
             const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
 
             li.classList.add('group');
@@ -325,6 +324,7 @@ export default class LayerSwitcher extends Control {
               li.classList.add(CSS_PREFIX + 'fold');
               li.classList.add(CSS_PREFIX + lyr.get('fold'));
               const btn = document.createElement('button');
+              btn.className = 'arrow';
               btn.onclick = function (e) {
                 LayerSwitcher.toggleFold_(lyr, li);
               };
@@ -360,60 +360,89 @@ export default class LayerSwitcher extends Control {
             if (lyr.get('type') === 'base') {
                 input.type = 'radio';
                 input.name = 'base';
+                input.id = checkboxId;
+                input.checked = lyr.get('visible');
+                input.indeterminate = lyr.get('indeterminate');
+                input.onchange = function(e) {
+                    LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                    render(lyr);
+                };
+                li.appendChild(input);
+
+                label.htmlFor = checkboxId;
+                label.innerHTML = lyrTitle;
+
+                var rsl = map.getView().getResolution();
+                if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
+                    label.className += ' disabled';
+                }
+
+                li.appendChild(label);
             } else {
+                const btn = document.createElement('button');
+                btn.setAttribute("data-target", "#tg"+checkboxId);
+                btn.setAttribute("data-toggle", "collapse");
+                btn.className = 'btn btn-primary legend';
+                li.appendChild(btn);
+
                 input.type = 'checkbox';
-            }
-            input.id = checkboxId;
-            input.checked = lyr.get('visible');
-            input.indeterminate = lyr.get('indeterminate');
-            input.onchange = function(e) {
-                LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
-                render(lyr);
-            };
-            li.appendChild(input);
 
-            label.htmlFor = checkboxId;
-            label.innerHTML = lyrTitle;
+                input.id = checkboxId;
+                input.checked = lyr.get('visible');
+                input.indeterminate = lyr.get('indeterminate');
+                input.onchange = function(e) {
+                    LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                    render(lyr);
+                };
+                li.appendChild(input);
 
-            var rsl = map.getView().getResolution();
-            if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
-                label.className += ' disabled';
-            }
+                label.htmlFor = checkboxId;
+                label.innerHTML = lyrTitle;
 
-            li.appendChild(label);
+                var rsl = map.getView().getResolution();
+                if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
+                    label.className += ' disabled';
+                }
 
-            if (lyr.get('type') !== 'base') {
-              const opacity = document.createElement('input');
-              opacity.type = 'range';
-              opacity.min = '0';
-              opacity.max = '1';
-              opacity.step = '0.1'
-              opacity.name = checkboxId;
-              opacity.value = String(lyr.get('opacity'));
-              opacity.onchange = function(e) {
-                  LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-              };
-              li.appendChild(opacity);
+                li.appendChild(label);
 
 
-              // console.log(lyr.getSource().getUrls());            
-              var lyrUrl = lyr.getSource().getUrls();
-              console.log(lyrUrl[0]);
-              var wmsSource = new ol.source.ImageWMS({
-                url: lyrUrl[0],
-                // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                params: {'LAYERS': lyr.Name},
-                ratio: 1,
-                serverType: 'qgis'
-              });
-              var graphicUrl = wmsSource.getLegendUrl();
-              // console.log(graphicUrl);
+                const opWrapper = document.createElement('div');
+                opWrapper.id = 'tg'+checkboxId;
+                opWrapper.className = 'collapse';
+                const opacity = document.createElement('input');
+                opacity.type = 'range';
+                opacity.min = '0';
+                opacity.max = '1';
+                opacity.step = '0.1'
+                opacity.name = checkboxId;
+                opacity.value = String(lyr.get('opacity'));
+                opacity.onchange = function(e) {
+                    LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                };
+                opWrapper.appendChild(opacity);
+                // li.appendChild(opWrapper);
 
-              const legend = document.createElement('img');
-              // var img = document.getElementById('testimage');
-              legend.src = graphicUrl;
 
-              li.appendChild(legend);
+                var lyrUrl = lyr.getSource().getUrls();
+
+                var wmsSource = new ol.source.ImageWMS({
+                  url: lyrUrl[0],
+                  // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                  params: {'LAYERS': lyr.Name},
+                  ratio: 1,
+                  serverType: 'qgis'
+                });
+                var graphicUrl = wmsSource.getLegendUrl();
+                // console.log(graphicUrl);
+
+                const legend = document.createElement('img');
+                // var img = document.getElementById('testimage');
+                legend.src = graphicUrl;
+
+                opWrapper.appendChild(legend);
+
+                li.appendChild(opWrapper);
             }
         }
 
