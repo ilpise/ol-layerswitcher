@@ -108,7 +108,7 @@ export default class LayerSwitcher extends Control {
             this.element.classList.remove(this.shownClassName);
         }
     }
-    
+
     /**
     * Re-draw the layer panel to represent the current state of the layers.
     */
@@ -296,9 +296,9 @@ export default class LayerSwitcher extends Control {
     * @param {Number} idx Position in parent group list.
     */
     static renderLayer_(map, lyr, idx, options, render) {
-      
+
         // console.log('renderLayer_');
-        
+
         var li = document.createElement('li');
 
         var lyrTitle = lyr.get('title');
@@ -312,10 +312,10 @@ export default class LayerSwitcher extends Control {
             const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
 
             li.classList.add('group');
-            
-            // 
+
+            //
             // li.appendChild('<span style="margin-left: 8px;"><i class="fas fa-layer-group"></i></span>');
-            
+
             if (isBaseGroup) {
                 li.classList.add(CSS_PREFIX + 'base-group');
             }
@@ -347,7 +347,7 @@ export default class LayerSwitcher extends Control {
 
             label.innerHTML = lyrTitle;
             li.appendChild(label);
-                        
+
             var ul = document.createElement('ul');
             li.appendChild(ul);
 
@@ -382,38 +382,39 @@ export default class LayerSwitcher extends Control {
 
             li.appendChild(label);
 
-            const opacity = document.createElement('input');
-            opacity.type = 'range';
-            opacity.min = '0';
-            opacity.max = '1';
-            opacity.step = '0.1'
-            opacity.name = checkboxId;
-            opacity.value = String(lyr.get('opacity'));
-            opacity.onchange = function(e) {
-                LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-            };
-            li.appendChild(opacity);
+            if (lyr.get('type') !== 'base') {
+              const opacity = document.createElement('input');
+              opacity.type = 'range';
+              opacity.min = '0';
+              opacity.max = '1';
+              opacity.step = '0.1'
+              opacity.name = checkboxId;
+              opacity.value = String(lyr.get('opacity'));
+              opacity.onchange = function(e) {
+                  LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+              };
+              li.appendChild(opacity);
 
 
-            // console.log(lyr.getSource().getUrls());            
-            var lyrUrl = lyr.getSource().getUrls();
-            console.log(lyrUrl[0]);
-            var wmsSource = new ol.source.ImageWMS({
-              url: lyrUrl[0],
-              // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-              params: {'LAYERS': lyr.Name},
-              ratio: 1,
-              serverType: 'qgis'
-            });
-            var graphicUrl = wmsSource.getLegendUrl();
-            // console.log(graphicUrl);
+              // console.log(lyr.getSource().getUrls());            
+              var lyrUrl = lyr.getSource().getUrls();
+              console.log(lyrUrl[0]);
+              var wmsSource = new ol.source.ImageWMS({
+                url: lyrUrl[0],
+                // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                params: {'LAYERS': lyr.Name},
+                ratio: 1,
+                serverType: 'qgis'
+              });
+              var graphicUrl = wmsSource.getLegendUrl();
+              // console.log(graphicUrl);
 
-            const legend = document.createElement('img');
-            // var img = document.getElementById('testimage');
-            legend.src = graphicUrl;
+              const legend = document.createElement('img');
+              // var img = document.getElementById('testimage');
+              legend.src = graphicUrl;
 
-            li.appendChild(legend);
-
+              li.appendChild(legend);
+            }
         }
 
         return li;

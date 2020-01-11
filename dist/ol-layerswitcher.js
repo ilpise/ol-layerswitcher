@@ -431,7 +431,7 @@ var LayerSwitcher = function (_Control) {
         key: 'renderLayer_',
         value: function renderLayer_(map, lyr, idx, options, render) {
 
-            console.log('renderLayer_');
+            // console.log('renderLayer_');
 
             var li = document.createElement('li');
 
@@ -447,7 +447,7 @@ var LayerSwitcher = function (_Control) {
 
                 li.classList.add('group');
 
-                // 
+                //
                 // li.appendChild('<span style="margin-left: 8px;"><i class="fas fa-layer-group"></i></span>');
 
                 if (isBaseGroup) {
@@ -515,36 +515,38 @@ var LayerSwitcher = function (_Control) {
 
                 li.appendChild(label);
 
-                var opacity = document.createElement('input');
-                opacity.type = 'range';
-                opacity.min = '0';
-                opacity.max = '1';
-                opacity.step = '0.1';
-                opacity.name = checkboxId;
-                opacity.value = String(lyr.get('opacity'));
-                opacity.onchange = function (e) {
-                    LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-                };
-                li.appendChild(opacity);
+                if (lyr.get('type') !== 'base') {
+                    var opacity = document.createElement('input');
+                    opacity.type = 'range';
+                    opacity.min = '0';
+                    opacity.max = '1';
+                    opacity.step = '0.1';
+                    opacity.name = checkboxId;
+                    opacity.value = String(lyr.get('opacity'));
+                    opacity.onchange = function (e) {
+                        LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                    };
+                    li.appendChild(opacity);
 
-                // console.log(lyr.getSource().getUrls());            
-                var lyrUrl = lyr.getSource().getUrls();
-                console.log(lyrUrl[0]);
-                var wmsSource = new ol.source.ImageWMS({
-                    url: lyrUrl[0],
-                    // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                    params: { 'LAYERS': lyr.Name, 'LEGEND_OPTIONS': { 'forceLabels': 'off' } },
-                    ratio: 1,
-                    serverType: 'qgis'
-                });
-                var graphicUrl = wmsSource.getLegendUrl();
-                console.log(graphicUrl);
+                    // console.log(lyr.getSource().getUrls());            
+                    var lyrUrl = lyr.getSource().getUrls();
+                    console.log(lyrUrl[0]);
+                    var wmsSource = new ol.source.ImageWMS({
+                        url: lyrUrl[0],
+                        // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                        params: { 'LAYERS': lyr.Name },
+                        ratio: 1,
+                        serverType: 'qgis'
+                    });
+                    var graphicUrl = wmsSource.getLegendUrl();
+                    // console.log(graphicUrl);
 
-                var legend = document.createElement('img');
-                // var img = document.getElementById('testimage');
-                legend.src = graphicUrl;
+                    var legend = document.createElement('img');
+                    // var img = document.getElementById('testimage');
+                    legend.src = graphicUrl;
 
-                li.appendChild(legend);
+                    li.appendChild(legend);
+                }
             }
 
             return li;
