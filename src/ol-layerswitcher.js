@@ -382,7 +382,11 @@ export default class LayerSwitcher extends Control {
                 const btn = document.createElement('button');
                 btn.setAttribute("data-target", "#tg"+checkboxId);
                 btn.setAttribute("data-toggle", "collapse");
-                btn.className = 'btn btn-primary legend';
+                btn.className = 'btn btn-default btn-xs legend';
+                var icon = document.createElement('span');
+                icon.className = "glyphicon glyphicon-plus-sign";
+                icon.setAttribute("aria-hidden", "true");
+                btn.appendChild(icon);
                 li.appendChild(btn);
 
                 input.type = 'checkbox';
@@ -410,17 +414,23 @@ export default class LayerSwitcher extends Control {
                 const opWrapper = document.createElement('div');
                 opWrapper.id = 'tg'+checkboxId;
                 opWrapper.className = 'collapse';
+
+                const opWrap = document.createElement('div');
                 const opacity = document.createElement('input');
                 opacity.type = 'range';
                 opacity.min = '0';
                 opacity.max = '1';
-                opacity.step = '0.1'
+                opacity.step = '0.1';
+                opacity.setAttribute("style", "display:inline; width: 33%;");
                 opacity.name = checkboxId;
                 opacity.value = String(lyr.get('opacity'));
                 opacity.onchange = function(e) {
                     LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
                 };
-                opWrapper.appendChild(opacity);
+                const opLabel = document.createElement('label');
+                opLabel.innerHTML = 'Opacity';
+                opWrap.appendChild(opacity);
+                opWrap.appendChild(opLabel);
                 // li.appendChild(opWrapper);
 
 
@@ -438,8 +448,10 @@ export default class LayerSwitcher extends Control {
 
                 const legend = document.createElement('img');
                 // var img = document.getElementById('testimage');
-                legend.src = graphicUrl;
+                // legend.src = graphicUrl;
+                legend.src = graphicUrl+'&LAYERTITLE=false';
 
+                opWrapper.appendChild(opWrap);
                 opWrapper.appendChild(legend);
 
                 li.appendChild(opWrapper);
