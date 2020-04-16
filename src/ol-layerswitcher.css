@@ -127,3 +127,45 @@ li.group.layer-switcher-fold {
 .btn.btn-primary.legend {
   margin-bottom: 12px;
 }
+
+/* Class for ol-layer_switcher buttons for legends */
+.btn-legend {
+    /* color: #333333; */
+    background-color: #ffffff;
+    /* border-color: #cccccc; */
+}
+.btn-xs.legend {
+    /* padding: 0px 5px; */
+    /* font-size: 11px; */
+    /* line-height: 1.5; */
+    /* border-radius: 3px; */
+    margin: -13px 0 0 3px;
+}
+
+.btn-default.legend {
+  padding: 0px 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+img.legend-img {
+  margin: -24px -25px -8px -13px;
+}
+
+/**/
+li.group.layer-switcher-base-group > ul > li > input {
+  /* padding: 0px 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 3px; */
+  /* margin: -12px 0 0 3px; */
+}
+
+li.group.layer-switcher-base-group > ul > li > label {
+  /* padding: 0px 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 3px; */
+  margin: -6px 0 0 3px;
+}

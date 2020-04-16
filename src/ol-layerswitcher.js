@@ -28,6 +28,7 @@ export default class LayerSwitcher extends Control {
         super({element: element, target: options.target});
 
         this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
+        // this.legendInLine =
 
         this.mapListeners = [];
 
@@ -114,7 +115,7 @@ export default class LayerSwitcher extends Control {
     */
     renderPanel() {
         this.dispatchEvent({ type: 'render' });
-        LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle });
+        LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, legendInLine: this.legendInLine });
         this.dispatchEvent({ type: 'rendercomplete' });
     }
 
@@ -132,6 +133,7 @@ export default class LayerSwitcher extends Control {
         options = options || {};
 
         options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
+        console.log(options);
 
         LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -379,82 +381,147 @@ export default class LayerSwitcher extends Control {
 
                 li.appendChild(label);
             } else {
-                const btn = document.createElement('button');
-                btn.setAttribute("data-target", "#tg"+checkboxId);
-                btn.setAttribute("data-toggle", "collapse");
-                btn.className = 'btn btn-default btn-xs legend';
-                var icon = document.createElement('span');
-                icon.className = "glyphicon glyphicon-plus-sign";
-                icon.setAttribute("aria-hidden", "true");
-                btn.appendChild(icon);
-                li.appendChild(btn);
+                console.log('OPTIONS ?');
+                console.log(options);
+                if(options.legendInLine == "1") {
+                    const btn = document.createElement('button');
+                    btn.setAttribute("data-target", "#tg"+checkboxId);
+                    btn.setAttribute("data-toggle", "collapse");
+                    btn.setAttribute("style", "overflow: hidden;");
+                    btn.className = 'btn btn-legend btn-xs legend';
+                    // btn.className = 'btn btn-xs legend';
+                    var icon = document.createElement('span');
 
-                input.type = 'checkbox';
+                    // icon.className = "glyphicon glyphicon-plus-sign";
+                    // icon.setAttribute("aria-hidden", "true");
+                    btn.appendChild(icon);
+                    li.appendChild(btn);
 
-                input.id = checkboxId;
-                input.checked = lyr.get('visible');
-                input.indeterminate = lyr.get('indeterminate');
-                input.onchange = function(e) {
-                    LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
-                    render(lyr);
-                };
-                li.appendChild(input);
+                    input.type = 'checkbox';
 
-                label.htmlFor = checkboxId;
-                label.innerHTML = lyrTitle;
+                    input.id = checkboxId;
+                    input.checked = lyr.get('visible');
+                    input.indeterminate = lyr.get('indeterminate');
+                    input.onchange = function(e) {
+                        LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                        render(lyr);
+                    };
+                    li.appendChild(input);
 
-                var rsl = map.getView().getResolution();
-                if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
-                    label.className += ' disabled';
+                    label.htmlFor = checkboxId;
+                    label.innerHTML = lyrTitle;
+
+                    var rsl = map.getView().getResolution();
+                    if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
+                        label.className += ' disabled';
+                    }
+
+                    li.appendChild(label);
+
+
+                    const opWrapper = document.createElement('div');
+                    opWrapper.id = 'tg'+checkboxId;
+                    opWrapper.className = 'collapse';
+
+                    const opWrap = document.createElement('div');
+                    const opacity = document.createElement('input');
+                    opacity.type = 'range';
+                    opacity.min = '0';
+                    opacity.max = '1';
+                    opacity.step = '0.1';
+                    opacity.setAttribute("style", "display:inline; width: 33%;");
+                    opacity.name = checkboxId;
+                    opacity.value = String(lyr.get('opacity'));
+                    opacity.onchange = function(e) {
+                        LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                    };
+                    const opLabel = document.createElement('label');
+                    opLabel.innerHTML = 'Opacity';
+                    opWrap.appendChild(opacity);
+                    opWrap.appendChild(opLabel);
+
+                    opWrapper.appendChild(opWrap);
+
+                    li.appendChild(opWrapper);
+                } else {
+                  console.log('GLYPHYCON BEHAVIOUR');
+                  const btn = document.createElement('button');
+                  btn.setAttribute("data-target", "#tg"+checkboxId);
+                  btn.setAttribute("data-toggle", "collapse");
+                  btn.className = 'btn btn-default btn-xs legend';
+                  var icon = document.createElement('span');
+                  icon.className = "glyphicon glyphicon-plus-sign";
+                  icon.setAttribute("aria-hidden", "true");
+                  btn.appendChild(icon);
+                  li.appendChild(btn);
+
+                  input.type = 'checkbox';
+
+                  input.id = checkboxId;
+                  input.checked = lyr.get('visible');
+                  input.indeterminate = lyr.get('indeterminate');
+                  input.onchange = function(e) {
+                      LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                      render(lyr);
+                  };
+                  li.appendChild(input);
+
+                  label.htmlFor = checkboxId;
+                  label.innerHTML = lyrTitle;
+
+                  var rsl = map.getView().getResolution();
+                  if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
+                      label.className += ' disabled';
+                  }
+
+                  li.appendChild(label);
+
+
+                  const opWrapper = document.createElement('div');
+                  opWrapper.id = 'tg'+checkboxId;
+                  opWrapper.className = 'collapse';
+
+                  const opWrap = document.createElement('div');
+                  const opacity = document.createElement('input');
+                  opacity.type = 'range';
+                  opacity.min = '0';
+                  opacity.max = '1';
+                  opacity.step = '0.1';
+                  opacity.setAttribute("style", "display:inline; width: 33%;");
+                  opacity.name = checkboxId;
+                  opacity.value = String(lyr.get('opacity'));
+                  opacity.onchange = function(e) {
+                      LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                  };
+                  const opLabel = document.createElement('label');
+                  opLabel.innerHTML = 'Opacity';
+                  opWrap.appendChild(opacity);
+                  opWrap.appendChild(opLabel);
+                  // li.appendChild(opWrapper);
+
+
+                  var lyrUrl = lyr.getSource().getUrls();
+
+                  var wmsSource = new ol.source.ImageWMS({
+                    url: lyrUrl[0],
+                    // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                    params: {'LAYERS': lyr.Name},
+                    ratio: 1,
+                    serverType: 'qgis'
+                  });
+                  var graphicUrl = wmsSource.getLegendUrl();
+                  // console.log(graphicUrl);
+
+                  const legend = document.createElement('img');
+                  // var img = document.getElementById('testimage');
+                  // legend.src = graphicUrl;
+                  legend.src = graphicUrl+'&LAYERTITLE=false';
+
+                  opWrapper.appendChild(opWrap);
+                  opWrapper.appendChild(legend);
+
+                  li.appendChild(opWrapper);
                 }
-
-                li.appendChild(label);
-
-
-                const opWrapper = document.createElement('div');
-                opWrapper.id = 'tg'+checkboxId;
-                opWrapper.className = 'collapse';
-
-                const opWrap = document.createElement('div');
-                const opacity = document.createElement('input');
-                opacity.type = 'range';
-                opacity.min = '0';
-                opacity.max = '1';
-                opacity.step = '0.1';
-                opacity.setAttribute("style", "display:inline; width: 33%;");
-                opacity.name = checkboxId;
-                opacity.value = String(lyr.get('opacity'));
-                opacity.onchange = function(e) {
-                    LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-                };
-                const opLabel = document.createElement('label');
-                opLabel.innerHTML = 'Opacity';
-                opWrap.appendChild(opacity);
-                opWrap.appendChild(opLabel);
-                // li.appendChild(opWrapper);
-
-
-                var lyrUrl = lyr.getSource().getUrls();
-
-                var wmsSource = new ol.source.ImageWMS({
-                  url: lyrUrl[0],
-                  // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                  params: {'LAYERS': lyr.Name},
-                  ratio: 1,
-                  serverType: 'qgis'
-                });
-                var graphicUrl = wmsSource.getLegendUrl();
-                // console.log(graphicUrl);
-
-                const legend = document.createElement('img');
-                // var img = document.getElementById('testimage');
-                // legend.src = graphicUrl;
-                legend.src = graphicUrl+'&LAYERTITLE=false';
-
-                opWrapper.appendChild(opWrap);
-                opWrapper.appendChild(legend);
-
-                li.appendChild(opWrapper);
             }
         }
 

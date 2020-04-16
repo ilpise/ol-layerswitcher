@@ -125,6 +125,7 @@ var LayerSwitcher = function (_Control) {
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
 
         _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
+        // this.legendInLine =
 
         _this.mapListeners = [];
 
@@ -225,7 +226,7 @@ var LayerSwitcher = function (_Control) {
         key: 'renderPanel',
         value: function renderPanel() {
             this.dispatchEvent({ type: 'render' });
-            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle });
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, legendInLine: this.legendInLine });
             this.dispatchEvent({ type: 'rendercomplete' });
         }
 
@@ -246,6 +247,7 @@ var LayerSwitcher = function (_Control) {
             options = options || {};
 
             options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
+            console.log(options);
 
             LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -512,69 +514,145 @@ var LayerSwitcher = function (_Control) {
 
                     li.appendChild(label);
                 } else {
-                    var _btn = document.createElement('button');
-                    _btn.setAttribute("data-target", "#tg" + checkboxId);
-                    _btn.setAttribute("data-toggle", "collapse");
-                    _btn.className = 'btn btn-primary legend';
-                    li.appendChild(_btn);
+                    console.log('OPTIONS ?');
+                    console.log(options);
+                    if (options.legendInLine == "1") {
+                        var _btn = document.createElement('button');
+                        _btn.setAttribute("data-target", "#tg" + checkboxId);
+                        _btn.setAttribute("data-toggle", "collapse");
+                        _btn.setAttribute("style", "overflow: hidden;");
+                        _btn.className = 'btn btn-legend btn-xs legend';
+                        // btn.className = 'btn btn-xs legend';
+                        var icon = document.createElement('span');
 
-                    input.type = 'checkbox';
+                        // icon.className = "glyphicon glyphicon-plus-sign";
+                        // icon.setAttribute("aria-hidden", "true");
+                        _btn.appendChild(icon);
+                        li.appendChild(_btn);
 
-                    input.id = checkboxId;
-                    input.checked = lyr.get('visible');
-                    input.indeterminate = lyr.get('indeterminate');
-                    input.onchange = function (e) {
-                        LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
-                        render(lyr);
-                    };
-                    li.appendChild(input);
+                        input.type = 'checkbox';
 
-                    label.htmlFor = checkboxId;
-                    label.innerHTML = lyrTitle;
+                        input.id = checkboxId;
+                        input.checked = lyr.get('visible');
+                        input.indeterminate = lyr.get('indeterminate');
+                        input.onchange = function (e) {
+                            LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                            render(lyr);
+                        };
+                        li.appendChild(input);
 
-                    var rsl = map.getView().getResolution();
-                    if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-                        label.className += ' disabled';
+                        label.htmlFor = checkboxId;
+                        label.innerHTML = lyrTitle;
+
+                        var rsl = map.getView().getResolution();
+                        if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+                            label.className += ' disabled';
+                        }
+
+                        li.appendChild(label);
+
+                        var opWrapper = document.createElement('div');
+                        opWrapper.id = 'tg' + checkboxId;
+                        opWrapper.className = 'collapse';
+
+                        var opWrap = document.createElement('div');
+                        var opacity = document.createElement('input');
+                        opacity.type = 'range';
+                        opacity.min = '0';
+                        opacity.max = '1';
+                        opacity.step = '0.1';
+                        opacity.setAttribute("style", "display:inline; width: 33%;");
+                        opacity.name = checkboxId;
+                        opacity.value = String(lyr.get('opacity'));
+                        opacity.onchange = function (e) {
+                            LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                        };
+                        var opLabel = document.createElement('label');
+                        opLabel.innerHTML = 'Opacity';
+                        opWrap.appendChild(opacity);
+                        opWrap.appendChild(opLabel);
+
+                        opWrapper.appendChild(opWrap);
+
+                        li.appendChild(opWrapper);
+                    } else {
+                        console.log('GLYPHYCON BEHAVIOUR');
+                        var _btn2 = document.createElement('button');
+                        _btn2.setAttribute("data-target", "#tg" + checkboxId);
+                        _btn2.setAttribute("data-toggle", "collapse");
+                        _btn2.className = 'btn btn-default btn-xs legend';
+                        var icon = document.createElement('span');
+                        icon.className = "glyphicon glyphicon-plus-sign";
+                        icon.setAttribute("aria-hidden", "true");
+                        _btn2.appendChild(icon);
+                        li.appendChild(_btn2);
+
+                        input.type = 'checkbox';
+
+                        input.id = checkboxId;
+                        input.checked = lyr.get('visible');
+                        input.indeterminate = lyr.get('indeterminate');
+                        input.onchange = function (e) {
+                            LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
+                            render(lyr);
+                        };
+                        li.appendChild(input);
+
+                        label.htmlFor = checkboxId;
+                        label.innerHTML = lyrTitle;
+
+                        var rsl = map.getView().getResolution();
+                        if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+                            label.className += ' disabled';
+                        }
+
+                        li.appendChild(label);
+
+                        var _opWrapper = document.createElement('div');
+                        _opWrapper.id = 'tg' + checkboxId;
+                        _opWrapper.className = 'collapse';
+
+                        var _opWrap = document.createElement('div');
+                        var _opacity = document.createElement('input');
+                        _opacity.type = 'range';
+                        _opacity.min = '0';
+                        _opacity.max = '1';
+                        _opacity.step = '0.1';
+                        _opacity.setAttribute("style", "display:inline; width: 33%;");
+                        _opacity.name = checkboxId;
+                        _opacity.value = String(lyr.get('opacity'));
+                        _opacity.onchange = function (e) {
+                            LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                        };
+                        var _opLabel = document.createElement('label');
+                        _opLabel.innerHTML = 'Opacity';
+                        _opWrap.appendChild(_opacity);
+                        _opWrap.appendChild(_opLabel);
+                        // li.appendChild(opWrapper);
+
+
+                        var lyrUrl = lyr.getSource().getUrls();
+
+                        var wmsSource = new ol.source.ImageWMS({
+                            url: lyrUrl[0],
+                            // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                            params: { 'LAYERS': lyr.Name },
+                            ratio: 1,
+                            serverType: 'qgis'
+                        });
+                        var graphicUrl = wmsSource.getLegendUrl();
+                        // console.log(graphicUrl);
+
+                        var legend = document.createElement('img');
+                        // var img = document.getElementById('testimage');
+                        // legend.src = graphicUrl;
+                        legend.src = graphicUrl + '&LAYERTITLE=false';
+
+                        _opWrapper.appendChild(_opWrap);
+                        _opWrapper.appendChild(legend);
+
+                        li.appendChild(_opWrapper);
                     }
-
-                    li.appendChild(label);
-
-                    var opWrapper = document.createElement('div');
-                    opWrapper.id = 'tg' + checkboxId;
-                    opWrapper.className = 'collapse';
-                    var opacity = document.createElement('input');
-                    opacity.type = 'range';
-                    opacity.min = '0';
-                    opacity.max = '1';
-                    opacity.step = '0.1';
-                    opacity.name = checkboxId;
-                    opacity.value = String(lyr.get('opacity'));
-                    opacity.onchange = function (e) {
-                        LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-                    };
-                    opWrapper.appendChild(opacity);
-                    // li.appendChild(opWrapper);
-
-
-                    var lyrUrl = lyr.getSource().getUrls();
-
-                    var wmsSource = new ol.source.ImageWMS({
-                        url: lyrUrl[0],
-                        // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                        params: { 'LAYERS': lyr.Name },
-                        ratio: 1,
-                        serverType: 'qgis'
-                    });
-                    var graphicUrl = wmsSource.getLegendUrl();
-                    // console.log(graphicUrl);
-
-                    var legend = document.createElement('img');
-                    // var img = document.getElementById('testimage');
-                    legend.src = graphicUrl;
-
-                    opWrapper.appendChild(legend);
-
-                    li.appendChild(opWrapper);
                 }
             }
 
