@@ -115,7 +115,7 @@ export default class LayerSwitcher extends Control {
     */
     renderPanel() {
         this.dispatchEvent({ type: 'render' });
-        LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, legendInLine: this.legendInLine });
+        LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, legendInLine: this.legendInLine, layerStrategy: this.layerStrategy });
         this.dispatchEvent({ type: 'rendercomplete' });
     }
 
@@ -133,7 +133,7 @@ export default class LayerSwitcher extends Control {
         options = options || {};
 
         options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
-        console.log(options);
+        // console.log(options);
 
         LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -381,19 +381,49 @@ export default class LayerSwitcher extends Control {
 
                 li.appendChild(label);
             } else {
-                console.log('OPTIONS ?');
-                console.log(options);
+                // console.log('OPTIONS ?');
+                // console.log(options);
                 if(options.legendInLine == "1") {
                     const btn = document.createElement('button');
                     btn.setAttribute("data-target", "#tg"+checkboxId);
                     btn.setAttribute("data-toggle", "collapse");
                     btn.setAttribute("style", "overflow: hidden;");
                     btn.className = 'btn btn-legend btn-xs legend';
-                    // btn.className = 'btn btn-xs legend';
                     var icon = document.createElement('span');
 
-                    // icon.className = "glyphicon glyphicon-plus-sign";
-                    // icon.setAttribute("aria-hidden", "true");
+                    if(options.layerStrategy == "1") {
+                      // console.log(lyr.getSource());
+                      var lyrUrl = lyr.getSource().getUrl();
+                      var wmsSource = new ol.source.ImageWMS({
+                        url: lyrUrl,
+                        // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                        params: {'LAYERS': lyr.Name},
+                        ratio: 1,
+                        serverType: 'qgis'
+                      });
+
+                    } else {
+                      var lyrUrl = lyr.getSource().getUrls();
+                      var wmsSource = new ol.source.ImageWMS({
+                        url: lyrUrl[0],
+                        // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                        params: {'LAYERS': lyr.Name},
+                        ratio: 1,
+                        serverType: 'qgis'
+                      });
+
+                    }
+
+                    var graphicUrl = wmsSource.getLegendUrl();
+                    // console.log(graphicUrl);
+
+                    const legend = document.createElement('img');
+                    // var img = document.getElementById('testimage');
+                    // legend.src = graphicUrl;
+                    legend.src = graphicUrl+'&LAYERTITLE=false';
+
+                    icon.appendChild(legend);
+
                     btn.appendChild(icon);
                     li.appendChild(btn);
 
@@ -441,17 +471,22 @@ export default class LayerSwitcher extends Control {
                     opWrap.appendChild(opLabel);
 
                     opWrapper.appendChild(opWrap);
-
                     li.appendChild(opWrapper);
                 } else {
-                  console.log('GLYPHYCON BEHAVIOUR');
+                  /**
+                  /* LEGEND NOT INLINE
+                  **/
+                  // console.log('GLYPHYCON BEHAVIOUR');
                   const btn = document.createElement('button');
                   btn.setAttribute("data-target", "#tg"+checkboxId);
                   btn.setAttribute("data-toggle", "collapse");
                   btn.className = 'btn btn-default btn-xs legend';
                   var icon = document.createElement('span');
+
+                  // Set glyphicon icon
                   icon.className = "glyphicon glyphicon-plus-sign";
                   icon.setAttribute("aria-hidden", "true");
+
                   btn.appendChild(icon);
                   li.appendChild(btn);
 
@@ -498,17 +533,31 @@ export default class LayerSwitcher extends Control {
                   opWrap.appendChild(opacity);
                   opWrap.appendChild(opLabel);
                   // li.appendChild(opWrapper);
+                  // console.log('Layer strategy');
+                  // console.log(options.layerStrategy);
+                  if(options.layerStrategy == "1") {
+                    // console.log(lyr.getSource());
+                    var lyrUrl = lyr.getSource().getUrl();
+                    var wmsSource = new ol.source.ImageWMS({
+                      url: lyrUrl,
+                      // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                      params: {'LAYERS': lyr.Name},
+                      ratio: 1,
+                      serverType: 'qgis'
+                    });
 
+                  } else {
+                    var lyrUrl = lyr.getSource().getUrls();
+                    var wmsSource = new ol.source.ImageWMS({
+                      url: lyrUrl[0],
+                      // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                      params: {'LAYERS': lyr.Name},
+                      ratio: 1,
+                      serverType: 'qgis'
+                    });
 
-                  var lyrUrl = lyr.getSource().getUrls();
+                  }
 
-                  var wmsSource = new ol.source.ImageWMS({
-                    url: lyrUrl[0],
-                    // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                    params: {'LAYERS': lyr.Name},
-                    ratio: 1,
-                    serverType: 'qgis'
-                  });
                   var graphicUrl = wmsSource.getLegendUrl();
                   // console.log(graphicUrl);
 
@@ -519,6 +568,9 @@ export default class LayerSwitcher extends Control {
 
                   opWrapper.appendChild(opWrap);
                   opWrapper.appendChild(legend);
+
+                  // console.log('opWrapper');
+                  // console.log(opWrapper);
 
                   li.appendChild(opWrapper);
                 }

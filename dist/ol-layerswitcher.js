@@ -226,7 +226,7 @@ var LayerSwitcher = function (_Control) {
         key: 'renderPanel',
         value: function renderPanel() {
             this.dispatchEvent({ type: 'render' });
-            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, legendInLine: this.legendInLine });
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, legendInLine: this.legendInLine, layerStrategy: this.layerStrategy });
             this.dispatchEvent({ type: 'rendercomplete' });
         }
 
@@ -247,7 +247,7 @@ var LayerSwitcher = function (_Control) {
             options = options || {};
 
             options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
-            console.log(options);
+            // console.log(options);
 
             LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -514,19 +514,47 @@ var LayerSwitcher = function (_Control) {
 
                     li.appendChild(label);
                 } else {
-                    console.log('OPTIONS ?');
-                    console.log(options);
+                    // console.log('OPTIONS ?');
+                    // console.log(options);
                     if (options.legendInLine == "1") {
                         var _btn = document.createElement('button');
                         _btn.setAttribute("data-target", "#tg" + checkboxId);
                         _btn.setAttribute("data-toggle", "collapse");
                         _btn.setAttribute("style", "overflow: hidden;");
                         _btn.className = 'btn btn-legend btn-xs legend';
-                        // btn.className = 'btn btn-xs legend';
                         var icon = document.createElement('span');
 
-                        // icon.className = "glyphicon glyphicon-plus-sign";
-                        // icon.setAttribute("aria-hidden", "true");
+                        if (options.layerStrategy == "1") {
+                            // console.log(lyr.getSource());
+                            var lyrUrl = lyr.getSource().getUrl();
+                            var wmsSource = new ol.source.ImageWMS({
+                                url: lyrUrl,
+                                // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                                params: { 'LAYERS': lyr.Name },
+                                ratio: 1,
+                                serverType: 'qgis'
+                            });
+                        } else {
+                            var lyrUrl = lyr.getSource().getUrls();
+                            var wmsSource = new ol.source.ImageWMS({
+                                url: lyrUrl[0],
+                                // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                                params: { 'LAYERS': lyr.Name },
+                                ratio: 1,
+                                serverType: 'qgis'
+                            });
+                        }
+
+                        var graphicUrl = wmsSource.getLegendUrl();
+                        // console.log(graphicUrl);
+
+                        var legend = document.createElement('img');
+                        // var img = document.getElementById('testimage');
+                        // legend.src = graphicUrl;
+                        legend.src = graphicUrl + '&LAYERTITLE=false';
+
+                        icon.appendChild(legend);
+
                         _btn.appendChild(icon);
                         li.appendChild(_btn);
 
@@ -573,17 +601,22 @@ var LayerSwitcher = function (_Control) {
                         opWrap.appendChild(opLabel);
 
                         opWrapper.appendChild(opWrap);
-
                         li.appendChild(opWrapper);
                     } else {
-                        console.log('GLYPHYCON BEHAVIOUR');
+                        /**
+                        /* LEGEND NOT INLINE
+                        **/
+                        // console.log('GLYPHYCON BEHAVIOUR');
                         var _btn2 = document.createElement('button');
                         _btn2.setAttribute("data-target", "#tg" + checkboxId);
                         _btn2.setAttribute("data-toggle", "collapse");
                         _btn2.className = 'btn btn-default btn-xs legend';
                         var icon = document.createElement('span');
+
+                        // Set glyphicon icon
                         icon.className = "glyphicon glyphicon-plus-sign";
                         icon.setAttribute("aria-hidden", "true");
+
                         _btn2.appendChild(icon);
                         li.appendChild(_btn2);
 
@@ -629,27 +662,42 @@ var LayerSwitcher = function (_Control) {
                         _opWrap.appendChild(_opacity);
                         _opWrap.appendChild(_opLabel);
                         // li.appendChild(opWrapper);
+                        // console.log('Layer strategy');
+                        // console.log(options.layerStrategy);
+                        if (options.layerStrategy == "1") {
+                            // console.log(lyr.getSource());
+                            var lyrUrl = lyr.getSource().getUrl();
+                            var wmsSource = new ol.source.ImageWMS({
+                                url: lyrUrl,
+                                // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                                params: { 'LAYERS': lyr.Name },
+                                ratio: 1,
+                                serverType: 'qgis'
+                            });
+                        } else {
+                            var lyrUrl = lyr.getSource().getUrls();
+                            var wmsSource = new ol.source.ImageWMS({
+                                url: lyrUrl[0],
+                                // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+                                params: { 'LAYERS': lyr.Name },
+                                ratio: 1,
+                                serverType: 'qgis'
+                            });
+                        }
 
-
-                        var lyrUrl = lyr.getSource().getUrls();
-
-                        var wmsSource = new ol.source.ImageWMS({
-                            url: lyrUrl[0],
-                            // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                            params: { 'LAYERS': lyr.Name },
-                            ratio: 1,
-                            serverType: 'qgis'
-                        });
                         var graphicUrl = wmsSource.getLegendUrl();
                         // console.log(graphicUrl);
 
-                        var legend = document.createElement('img');
+                        var _legend = document.createElement('img');
                         // var img = document.getElementById('testimage');
                         // legend.src = graphicUrl;
-                        legend.src = graphicUrl + '&LAYERTITLE=false';
+                        _legend.src = graphicUrl + '&LAYERTITLE=false';
 
                         _opWrapper.appendChild(_opWrap);
-                        _opWrapper.appendChild(legend);
+                        _opWrapper.appendChild(_legend);
+
+                        // console.log('opWrapper');
+                        // console.log(opWrapper);
 
                         li.appendChild(_opWrapper);
                     }
