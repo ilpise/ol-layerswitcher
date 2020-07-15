@@ -149,18 +149,18 @@ li.group.layer-switcher-fold {
   border-radius: 3px;
 }
 
-img.legend-img {
+/* img.legend-img {
   margin: -24px -25px -8px -13px;
-}
+} */
 
 /**/
-li.group.layer-switcher-base-group > ul > li > input {
+/* li.group.layer-switcher-base-group > ul > li > input { */
   /* padding: 0px 5px;
   font-size: 11px;
   line-height: 1.5;
   border-radius: 3px; */
   /* margin: -12px 0 0 3px; */
-}
+/* } */
 
 li.group.layer-switcher-base-group > ul > li > label {
   /* padding: 0px 5px;

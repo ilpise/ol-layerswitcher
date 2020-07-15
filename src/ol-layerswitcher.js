@@ -420,7 +420,13 @@ export default class LayerSwitcher extends Control {
                     const legend = document.createElement('img');
                     // var img = document.getElementById('testimage');
                     // legend.src = graphicUrl;
-                    legend.src = graphicUrl+'&LAYERTITLE=false';
+                    // legend.src = graphicUrl+'&LAYERTITLE=false';
+                    legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
+
+                    // console.log(legend);
+                    legend.className = 'img-responsive';
+                    legend.setAttribute("style", "height: 20px; min-width:25px;");
 
                     icon.appendChild(legend);
 
