@@ -538,9 +538,11 @@ export default class LayerSwitcher extends Control {
                   opLabel.innerHTML = 'Opacity';
                   opWrap.appendChild(opacity);
                   opWrap.appendChild(opLabel);
+
                   // li.appendChild(opWrapper);
                   // console.log('Layer strategy');
                   // console.log(options.layerStrategy);
+                  console.log(lyr.getSource());
                   if(options.layerStrategy == "1") {
                     // console.log(lyr.getSource());
                     var lyrUrl = lyr.getSource().getUrl();

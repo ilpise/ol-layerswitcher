@@ -667,9 +667,11 @@ var LayerSwitcher = function (_Control) {
                         _opLabel.innerHTML = 'Opacity';
                         _opWrap.appendChild(_opacity);
                         _opWrap.appendChild(_opLabel);
+
                         // li.appendChild(opWrapper);
                         // console.log('Layer strategy');
                         // console.log(options.layerStrategy);
+                        console.log(lyr.getSource());
                         if (options.layerStrategy == "1") {
                             // console.log(lyr.getSource());
                             var lyrUrl = lyr.getSource().getUrl();
