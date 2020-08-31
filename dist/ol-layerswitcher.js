@@ -516,6 +516,7 @@ var LayerSwitcher = function (_Control) {
                 } else {
                     // console.log('OPTIONS ?');
                     // console.log(options);
+                    // console.log(lyrTitle);
                     if (options.legendInLine == "1") {
                         var _btn = document.createElement('button');
                         _btn.setAttribute("data-target", "#tg" + checkboxId);
@@ -530,7 +531,7 @@ var LayerSwitcher = function (_Control) {
                             var wmsSource = new ol.source.ImageWMS({
                                 url: lyrUrl,
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                                params: { 'LAYERS': lyr.Name },
+                                params: { 'LAYERS': encodeURI(lyrTitle) },
                                 ratio: 1,
                                 serverType: 'qgis'
                             });
@@ -539,7 +540,7 @@ var LayerSwitcher = function (_Control) {
                             var wmsSource = new ol.source.ImageWMS({
                                 url: lyrUrl[0],
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                                params: { 'LAYERS': lyr.Name },
+                                params: { 'LAYERS': encodeURI(lyrTitle) },
                                 ratio: 1,
                                 serverType: 'qgis'
                             });
@@ -678,7 +679,7 @@ var LayerSwitcher = function (_Control) {
                             var wmsSource = new ol.source.ImageWMS({
                                 url: lyrUrl,
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                                params: { 'LAYERS': lyr.Name },
+                                params: { 'LAYERS': encodeURI(lyrTitle) },
                                 ratio: 1,
                                 serverType: 'qgis'
                             });
@@ -687,7 +688,7 @@ var LayerSwitcher = function (_Control) {
                             var wmsSource = new ol.source.ImageWMS({
                                 url: lyrUrl[0],
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                                params: { 'LAYERS': lyr.Name },
+                                params: { 'LAYERS': encodeURI(lyrTitle) },
                                 ratio: 1,
                                 serverType: 'qgis'
                             });
