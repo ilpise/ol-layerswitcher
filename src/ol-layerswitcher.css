@@ -52,7 +52,7 @@
 }
 
 .layer-switcher ul {
-    padding-left: 2em;
+    padding-left: 0em;
     list-style: none;
 }
 
@@ -135,7 +135,7 @@ li.group.layer-switcher-fold {
     /* border-color: #cccccc; */
 }
 .btn-xs.legend {
-    /* padding: 0px 5px; */
+    padding: 0px 5px;
     /* font-size: 11px; */
     /* line-height: 1.5; */
     /* border-radius: 3px; */
