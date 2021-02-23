@@ -395,10 +395,14 @@ export default class LayerSwitcher extends Control {
                     if(options.layerStrategy == "1") {
                       // console.log(lyr.getSource());
                       var lyrUrl = lyr.getSource().getUrl();
+											console.log(lyrUrl);
+											console.log(lyrTitle);
+											console.log(encodeURI(lyrTitle));
                       var wmsSource = new ol.source.ImageWMS({
                         url: lyrUrl,
                         // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                        params: {'LAYERS': encodeURI(lyrTitle)},
+                        // params: {'LAYERS': encodeURI(lyrTitle)},
+                        params: {'LAYERS': lyrTitle},
                         ratio: 1,
                         serverType: 'qgis'
                       });
@@ -416,7 +420,7 @@ export default class LayerSwitcher extends Control {
                     }
 
                     var graphicUrl = wmsSource.getLegendUrl();
-                    // console.log(graphicUrl);
+                    console.log(graphicUrl);
 
                     const legend = document.createElement('img');
                     // var img = document.getElementById('testimage');
