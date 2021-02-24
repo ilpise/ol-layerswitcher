@@ -491,6 +491,7 @@ var LayerSwitcher = function (_Control) {
             } else {
 
                 li.className = 'layer';
+                li.setAttribute("style", "padding-left:1em;");
                 var input = document.createElement('input');
                 if (lyr.get('type') === 'base') {
                     input.type = 'radio';
@@ -521,8 +522,9 @@ var LayerSwitcher = function (_Control) {
                         var _btn = document.createElement('button');
                         _btn.setAttribute("data-target", "#tg" + checkboxId);
                         _btn.setAttribute("data-toggle", "collapse");
-                        _btn.setAttribute("style", "overflow: hidden;");
-                        _btn.className = 'btn btn-legend btn-xs legend';
+                        // btn.setAttribute("style", "overflow: hidden;");
+                        _btn.className = 'btn';
+                        // btn.className = 'btn btn-legend btn-xs legend';
                         var icon = document.createElement('span');
 
                         if (options.layerStrategy == "1") {
@@ -550,24 +552,6 @@ var LayerSwitcher = function (_Control) {
                             });
                         }
 
-                        var graphicUrl = wmsSource.getLegendUrl();
-                        console.log(graphicUrl);
-
-                        var legend = document.createElement('img');
-                        // var img = document.getElementById('testimage');
-                        // legend.src = graphicUrl;
-                        legend.src = graphicUrl + '&LAYERTITLE=false';
-                        // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
-                        // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
-
-                        // console.log(legend);
-                        legend.className = 'img-responsive';
-                        // legend.setAttribute("style", "height: 35px; min-width:35px;");
-
-                        icon.appendChild(legend);
-                        _btn.appendChild(icon);
-                        li.appendChild(_btn);
-
                         input.type = 'checkbox';
 
                         input.id = checkboxId;
@@ -589,6 +573,31 @@ var LayerSwitcher = function (_Control) {
 
                         li.appendChild(label);
 
+                        // Legend
+                        var graphicUrl = wmsSource.getLegendUrl();
+                        console.log(graphicUrl);
+
+                        var legWrapper = document.createElement('div');
+                        //legWrapper.className = 'form-group';
+
+                        var legend = document.createElement('img');
+                        // var img = document.getElementById('testimage');
+                        // legend.src = graphicUrl;
+                        legend.src = graphicUrl + '&LAYERTITLE=false';
+                        // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                        // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
+
+                        // console.log(legend);
+                        legend.className = 'img-responsive';
+                        // legend.setAttribute("style", "max-height: 50%;");
+                        legend.setAttribute("style", "zoom:60%;");
+
+                        icon.appendChild(legend);
+                        _btn.appendChild(icon);
+                        legWrapper.appendChild(_btn);
+                        li.appendChild(legWrapper);
+
+                        // Opacity
                         var opWrapper = document.createElement('div');
                         opWrapper.id = 'tg' + checkboxId;
                         opWrapper.className = 'collapse';

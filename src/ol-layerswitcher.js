@@ -358,6 +358,7 @@ export default class LayerSwitcher extends Control {
         } else {
 
             li.className = 'layer';
+						li.setAttribute("style", "padding-left:1em;");
             var input = document.createElement('input');
             if (lyr.get('type') === 'base') {
                 input.type = 'radio';
@@ -388,8 +389,9 @@ export default class LayerSwitcher extends Control {
                     const btn = document.createElement('button');
                     btn.setAttribute("data-target", "#tg"+checkboxId);
                     btn.setAttribute("data-toggle", "collapse");
-                    btn.setAttribute("style", "overflow: hidden;");
-                    btn.className = 'btn btn-legend btn-xs legend';
+                    // btn.setAttribute("style", "overflow: hidden;");
+										btn.className = 'btn';	
+                    // btn.className = 'btn btn-legend btn-xs legend';
                     var icon = document.createElement('span');
 
                     if(options.layerStrategy == "1") {
@@ -419,23 +421,6 @@ export default class LayerSwitcher extends Control {
 
                     }
 
-                    var graphicUrl = wmsSource.getLegendUrl();
-                    console.log(graphicUrl);
-
-                    const legend = document.createElement('img');
-                    // var img = document.getElementById('testimage');
-                    // legend.src = graphicUrl;
-                    legend.src = graphicUrl+'&LAYERTITLE=false';
-                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
-                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
-
-                    // console.log(legend);
-                    legend.className = 'img-responsive';
-                    // legend.setAttribute("style", "height: 35px; min-width:35px;");
-
-                    icon.appendChild(legend);
-                    btn.appendChild(icon);
-                    li.appendChild(btn);
 
                     input.type = 'checkbox';
 
@@ -458,7 +443,31 @@ export default class LayerSwitcher extends Control {
 
                     li.appendChild(label);
 
+										// Legend
+                    var graphicUrl = wmsSource.getLegendUrl();
+                    console.log(graphicUrl);
 
+                    const legWrapper = document.createElement('div');
+                    //legWrapper.className = 'form-group';
+										
+                    const legend = document.createElement('img');
+                    // var img = document.getElementById('testimage');
+                    // legend.src = graphicUrl;
+                    legend.src = graphicUrl+'&LAYERTITLE=false';
+                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
+
+                    // console.log(legend);
+                    legend.className = 'img-responsive';
+                    // legend.setAttribute("style", "max-height: 50%;");
+										legend.setAttribute("style", "zoom:60%;");
+
+                    icon.appendChild(legend);
+                    btn.appendChild(icon);
+										legWrapper.appendChild(btn);
+                    li.appendChild(legWrapper);
+
+										// Opacity
                     const opWrapper = document.createElement('div');
                     opWrapper.id = 'tg'+checkboxId;
                     opWrapper.className = 'collapse';
