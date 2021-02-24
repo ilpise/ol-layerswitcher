@@ -556,16 +556,15 @@ var LayerSwitcher = function (_Control) {
                         var legend = document.createElement('img');
                         // var img = document.getElementById('testimage');
                         // legend.src = graphicUrl;
-                        // legend.src = graphicUrl+'&LAYERTITLE=false';
-                        legend.src = graphicUrl + '&LAYERTITLE=false&RULELABEL=false';
+                        legend.src = graphicUrl + '&LAYERTITLE=false';
+                        // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
                         // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
 
                         // console.log(legend);
                         legend.className = 'img-responsive';
-                        legend.setAttribute("style", "height: 20px; min-width:25px;");
+                        // legend.setAttribute("style", "height: 35px; min-width:35px;");
 
                         icon.appendChild(legend);
-
                         _btn.appendChild(icon);
                         li.appendChild(_btn);
 
@@ -595,6 +594,7 @@ var LayerSwitcher = function (_Control) {
                         opWrapper.className = 'collapse';
 
                         var opWrap = document.createElement('div');
+
                         var opacity = document.createElement('input');
                         opacity.type = 'range';
                         opacity.min = '0';

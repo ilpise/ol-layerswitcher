@@ -425,16 +425,15 @@ export default class LayerSwitcher extends Control {
                     const legend = document.createElement('img');
                     // var img = document.getElementById('testimage');
                     // legend.src = graphicUrl;
-                    // legend.src = graphicUrl+'&LAYERTITLE=false';
-                    legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                    legend.src = graphicUrl+'&LAYERTITLE=false';
+                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
                     // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
 
                     // console.log(legend);
                     legend.className = 'img-responsive';
-                    legend.setAttribute("style", "height: 20px; min-width:25px;");
+                    // legend.setAttribute("style", "height: 35px; min-width:35px;");
 
                     icon.appendChild(legend);
-
                     btn.appendChild(icon);
                     li.appendChild(btn);
 
@@ -465,6 +464,7 @@ export default class LayerSwitcher extends Control {
                     opWrapper.className = 'collapse';
 
                     const opWrap = document.createElement('div');
+										
                     const opacity = document.createElement('input');
                     opacity.type = 'range';
                     opacity.min = '0';
