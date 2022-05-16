@@ -547,12 +547,16 @@ var LayerSwitcher = function (_Control) {
 
                         var graphicUrl = wmsSource.getLegendUrl();
                         // console.log(graphicUrl);
-
+                        console.log('LAYERSWITCHER');
+                        console.log(lyr);
+                        console.log(lyr.get('name'));
+                        console.log(lyr.get('title'));
                         var legend = document.createElement('img');
                         // var img = document.getElementById('testimage');
                         // legend.src = graphicUrl;
                         // legend.src = graphicUrl+'&LAYERTITLE=false';
-                        legend.src = graphicUrl + '&LAYERTITLE=false&RULELABEL=false';
+                        // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                        legend.src = graphicUrl + '&LAYERTITLE=false&RULELABEL=false&LAYER=' + lyr.get('title');
                         // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
 
                         // console.log(legend);

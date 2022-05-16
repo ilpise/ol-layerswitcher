@@ -416,12 +416,16 @@ export default class LayerSwitcher extends Control {
 
                     var graphicUrl = wmsSource.getLegendUrl();
                     // console.log(graphicUrl);
-
+                    // console.log('LAYERSWITCHER');
+                    // console.log(lyr);
+                    // console.log(lyr.get('name')); // NOT WORKING
+                    // console.log(lyr.get('title'));
                     const legend = document.createElement('img');
                     // var img = document.getElementById('testimage');
                     // legend.src = graphicUrl;
                     // legend.src = graphicUrl+'&LAYERTITLE=false';
-                    legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                    // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false';
+                    legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&LAYER='+lyr.get('title');
                     // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
 
                     // console.log(legend);
