@@ -546,7 +546,7 @@ export default class LayerSwitcher extends Control {
                   // li.appendChild(opWrapper);
                   // console.log('Layer strategy');
                   // console.log(options.layerStrategy);
-                  console.log(lyr.getSource());
+                  // console.log(lyr.getSource());
                   if(options.layerStrategy == "1") {
                     // console.log(lyr.getSource());
                     var lyrUrl = lyr.getSource().getUrl();

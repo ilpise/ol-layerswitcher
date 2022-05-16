@@ -547,10 +547,10 @@ var LayerSwitcher = function (_Control) {
 
                         var graphicUrl = wmsSource.getLegendUrl();
                         // console.log(graphicUrl);
-                        console.log('LAYERSWITCHER');
-                        console.log(lyr);
-                        console.log(lyr.get('name'));
-                        console.log(lyr.get('title'));
+                        // console.log('LAYERSWITCHER');
+                        // console.log(lyr);
+                        // console.log(lyr.get('name')); // NOT WORKING
+                        // console.log(lyr.get('title'));
                         var legend = document.createElement('img');
                         // var img = document.getElementById('testimage');
                         // legend.src = graphicUrl;
@@ -675,7 +675,7 @@ var LayerSwitcher = function (_Control) {
                         // li.appendChild(opWrapper);
                         // console.log('Layer strategy');
                         // console.log(options.layerStrategy);
-                        console.log(lyr.getSource());
+                        // console.log(lyr.getSource());
                         if (options.layerStrategy == "1") {
                             // console.log(lyr.getSource());
                             var lyrUrl = lyr.getSource().getUrl();
