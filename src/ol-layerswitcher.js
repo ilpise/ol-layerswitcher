@@ -307,6 +307,7 @@ export default class LayerSwitcher extends Control {
         var checkboxId = LayerSwitcher.uuid();
 
         var label = document.createElement('label');
+        label.className = 'small';
 
         // console.log(lyr.getLayers);
         if (lyr.getLayers && !lyr.get('combine')) {
@@ -385,8 +386,8 @@ export default class LayerSwitcher extends Control {
                 // console.log(options);
                 if(options.legendInLine == "1") {
                     const btn = document.createElement('button');
-                    btn.setAttribute("data-target", "#tg"+checkboxId);
-                    btn.setAttribute("data-toggle", "collapse");
+                    btn.setAttribute("data-bs-target", "#tg"+checkboxId);
+                    btn.setAttribute("data-bs-toggle", "collapse");
                     btn.setAttribute("style", "overflow: hidden;");
                     btn.className = 'btn btn-legend btn-xs legend';
                     var icon = document.createElement('span');
@@ -429,7 +430,8 @@ export default class LayerSwitcher extends Control {
                     // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
 
                     // console.log(legend);
-                    legend.className = 'img-responsive';
+                    // legend.className = 'img-responsive';
+                    legend.className = 'img-fluid';
                     legend.setAttribute("style", "height: 20px; min-width:25px;");
 
                     icon.appendChild(legend);
@@ -488,8 +490,8 @@ export default class LayerSwitcher extends Control {
                   **/
                   // console.log('GLYPHYCON BEHAVIOUR');
                   const btn = document.createElement('button');
-                  btn.setAttribute("data-target", "#tg"+checkboxId);
-                  btn.setAttribute("data-toggle", "collapse");
+                  btn.setAttribute("data-bs-target", "#tg"+checkboxId);
+                  btn.setAttribute("data-bs-toggle", "collapse");
                   btn.className = 'btn btn-default btn-xs legend';
                   var icon = document.createElement('span');
 

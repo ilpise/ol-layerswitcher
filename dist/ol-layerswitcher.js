@@ -441,6 +441,7 @@ var LayerSwitcher = function (_Control) {
             var checkboxId = LayerSwitcher.uuid();
 
             var label = document.createElement('label');
+            label.className = 'small';
 
             // console.log(lyr.getLayers);
             if (lyr.getLayers && !lyr.get('combine')) {
@@ -518,8 +519,8 @@ var LayerSwitcher = function (_Control) {
                     // console.log(options);
                     if (options.legendInLine == "1") {
                         var _btn = document.createElement('button');
-                        _btn.setAttribute("data-target", "#tg" + checkboxId);
-                        _btn.setAttribute("data-toggle", "collapse");
+                        _btn.setAttribute("data-bs-target", "#tg" + checkboxId);
+                        _btn.setAttribute("data-bs-toggle", "collapse");
                         _btn.setAttribute("style", "overflow: hidden;");
                         _btn.className = 'btn btn-legend btn-xs legend';
                         var icon = document.createElement('span');
@@ -560,7 +561,8 @@ var LayerSwitcher = function (_Control) {
                         // legend.src = graphicUrl+'&LAYERTITLE=false&RULELABEL=false&SYMBOLWIDTH=2&BOXSPACE=1';
 
                         // console.log(legend);
-                        legend.className = 'img-responsive';
+                        // legend.className = 'img-responsive';
+                        legend.className = 'img-fluid';
                         legend.setAttribute("style", "height: 20px; min-width:25px;");
 
                         icon.appendChild(legend);
@@ -618,8 +620,8 @@ var LayerSwitcher = function (_Control) {
                         **/
                         // console.log('GLYPHYCON BEHAVIOUR');
                         var _btn2 = document.createElement('button');
-                        _btn2.setAttribute("data-target", "#tg" + checkboxId);
-                        _btn2.setAttribute("data-toggle", "collapse");
+                        _btn2.setAttribute("data-bs-target", "#tg" + checkboxId);
+                        _btn2.setAttribute("data-bs-toggle", "collapse");
                         _btn2.className = 'btn btn-default btn-xs legend';
                         var icon = document.createElement('span');
 
