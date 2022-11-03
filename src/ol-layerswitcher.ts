@@ -260,6 +260,8 @@ export default class LayerSwitcher extends Control {
     this.dispatchEvent('render');
     LayerSwitcher.renderPanel(this.getMap(), this.panel, {
       groupSelectStyle: this.groupSelectStyle,
+      legendInLine: this.legendInLine,
+      layerStrategy: this.layerStrategy,
       reverse: this.reverse
     });
     this.dispatchEvent('rendercomplete');
@@ -569,7 +571,11 @@ export default class LayerSwitcher extends Control {
       if (lyr.get('type') === 'base') {
         input.type = 'radio';
       } else {
+
+        //
+
         input.type = 'checkbox';
+
       }
       input.id = checkboxId;
       input.checked = lyr.get('visible');
@@ -600,9 +606,42 @@ export default class LayerSwitcher extends Control {
       }
 
       li.appendChild(label);
+
+      // const test = opacityWidget_(checkboxId, map, lyr)
+      // li.appendChild(test)
+
     }
 
     return li;
+  }
+
+  static opacityWidget_(
+    checkboxId: number,
+    map: PluggableMap,
+    lyr: PluggableMap | LayerGroup,
+  ): void {
+    const opWrapper = document.createElement('div');
+    opWrapper.id = 'tg'+checkboxId;
+    opWrapper.className = 'collapse';
+
+    const opWrap = document.createElement('div');
+    const opacity = document.createElement('input');
+    opacity.type = 'range';
+    opacity.min = '0';
+    opacity.max = '1';
+    opacity.step = '0.1';
+    opacity.setAttribute("style", "display:inline; width: 33%;");
+    opacity.name = checkboxId;
+    opacity.value = String(lyr.get('opacity'));
+    opacity.onchange = function(e) {
+        LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+    };
+    const opLabel = document.createElement('label');
+    opLabel.innerHTML = 'Opacity';
+    opWrap.appendChild(opacity);
+    opWrap.appendChild(opLabel);
+    opWrapper.appendChild(opWrap);
+    return opWrapper;
   }
 
   /**
