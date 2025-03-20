@@ -2,7 +2,7 @@ import Control from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import { unByKey } from 'ol/Observable';
 import { Options as ControlOptions } from 'ol/control/Control';
-import PluggableMap from 'ol/PluggableMap';
+import OlMap from 'ol/Map';
 import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
 import { Options as OlLayerBaseOptions } from 'ol/layer/Base';
@@ -51,7 +51,7 @@ const CSS_PREFIX = 'layer-switcher-';
  * lyr.set('title', 'OpenStreetMap');
  * ```
  *
- * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html#addControl).
+ * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html#addControl).
  * ```javascript
  * var layerSwitcher = new LayerSwitcher({
  *   reverse: true,
@@ -69,6 +69,7 @@ export default class LayerSwitcher extends Control {
   protected startActive: boolean;
   protected groupSelectStyle: 'none' | 'children' | 'group';
   protected reverse: boolean;
+  protected legendInLine: boolean;
   protected label: string;
   protected collapseLabel: string;
   protected tipLabel: string;
@@ -109,6 +110,8 @@ export default class LayerSwitcher extends Control {
     );
 
     this.reverse = options.reverse !== false;
+
+    this.legendInLine = options.legendInLine !== false;
 
     this.mapListeners = [];
 
@@ -172,7 +175,7 @@ export default class LayerSwitcher extends Control {
    * Set the map instance the control is associated with.
    * @param map The map instance.
    */
-  setMap(map: PluggableMap): void {
+  setMap(map: OlMap): void {
     // Clean up listeners associated with the previous map
     for (let i = 0; i < this.mapListeners.length; i++) {
       unByKey(this.mapListeners[i]);
@@ -261,7 +264,7 @@ export default class LayerSwitcher extends Control {
     LayerSwitcher.renderPanel(this.getMap(), this.panel, {
       groupSelectStyle: this.groupSelectStyle,
       legendInLine: this.legendInLine,
-      layerStrategy: this.layerStrategy,
+      // layerStrategy: this.layerStrategy,
       reverse: this.reverse
     });
     this.dispatchEvent('rendercomplete');
@@ -274,7 +277,7 @@ export default class LayerSwitcher extends Control {
    * @param options Options for panel, group, and layers
    */
   static renderPanel(
-    map: PluggableMap,
+    map: OlMap,
     panel: HTMLElement,
     options: RenderOptions
   ): void {
@@ -316,11 +319,15 @@ export default class LayerSwitcher extends Control {
     const ul = document.createElement('ul');
     panel.appendChild(ul);
     // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-    LayerSwitcher.renderLayers_(map, map, ul, options, function render(
-      _changedLyr: BaseLayer
-    ) {
-      LayerSwitcher.renderPanel(map, panel, options);
-    });
+    LayerSwitcher.renderLayers_(
+      map,
+      map,
+      ul,
+      options,
+      function render(_changedLyr: BaseLayer) {
+        LayerSwitcher.renderPanel(map, panel, options);
+      }
+    );
 
     // Create the event.
     const rendercomplete_event = new Event('rendercomplete');
@@ -341,7 +348,7 @@ export default class LayerSwitcher extends Control {
     }
   }
 
-  protected static setGroupVisibility(map: PluggableMap): void {
+  protected static setGroupVisibility(map: OlMap): void {
     // Get a list of groups, with the deepest first
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return (
@@ -380,7 +387,7 @@ export default class LayerSwitcher extends Control {
     });
   }
 
-  protected static setChildVisibility(map: PluggableMap): void {
+  protected static setChildVisibility(map: OlMap): void {
     // console.log('setChildVisibility');
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return (
@@ -413,7 +420,7 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static ensureTopVisibleBaseLayerShown(
-    map: PluggableMap,
+    map: OlMap,
     groupSelectStyle: GroupSelectStyle
   ): void {
     let lastVisibleBaseLyr;
@@ -438,7 +445,7 @@ export default class LayerSwitcher extends Control {
    * @param filterFn Optional function used to filter the returned layers
    */
   static getGroupsAndLayers(
-    grp: PluggableMap | LayerGroup,
+    grp: OlMap | LayerGroup,
     filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean
   ): BaseLayer[] {
     const layers = [];
@@ -469,7 +476,7 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static setVisible_(
-    map: PluggableMap,
+    map: OlMap,
     lyr: BaseLayer,
     visible: boolean,
     groupSelectStyle: GroupSelectStyle
@@ -504,7 +511,7 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static renderLayer_(
-    map: PluggableMap,
+    map: OlMap,
     lyr: BaseLayer,
     idx: number,
     options: RenderOptions,
@@ -571,11 +578,7 @@ export default class LayerSwitcher extends Control {
       if (lyr.get('type') === 'base') {
         input.type = 'radio';
       } else {
-
-        //
-
         input.type = 'checkbox';
-
       }
       input.id = checkboxId;
       input.checked = lyr.get('visible');
@@ -606,10 +609,6 @@ export default class LayerSwitcher extends Control {
       }
 
       li.appendChild(label);
-
-      // const test = opacityWidget_(checkboxId, map, lyr)
-      // li.appendChild(test)
-
     }
 
     return li;
@@ -617,11 +616,11 @@ export default class LayerSwitcher extends Control {
 
   static opacityWidget_(
     checkboxId: number,
-    map: PluggableMap,
-    lyr: PluggableMap | LayerGroup,
+    map: OlMap,
+    lyr: OlMap | LayerGroup
   ): void {
     const opWrapper = document.createElement('div');
-    opWrapper.id = 'tg'+checkboxId;
+    opWrapper.id = 'tg' + checkboxId;
     opWrapper.className = 'collapse';
 
     const opWrap = document.createElement('div');
@@ -630,18 +629,18 @@ export default class LayerSwitcher extends Control {
     opacity.min = '0';
     opacity.max = '1';
     opacity.step = '0.1';
-    opacity.setAttribute("style", "display:inline; width: 33%;");
-    opacity.name = checkboxId;
+    opacity.setAttribute('style', 'display:inline; width: 33%;');
+    opacity.name = String(checkboxId);
     opacity.value = String(lyr.get('opacity'));
-    opacity.onchange = function(e) {
-        LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-    };
+    // opacity.onchange = function (e) {
+    //   LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+    // };
     const opLabel = document.createElement('label');
     opLabel.innerHTML = 'Opacity';
     opWrap.appendChild(opacity);
     opWrap.appendChild(opLabel);
     opWrapper.appendChild(opWrap);
-    return opWrapper;
+    // return opWrapper;
   }
 
   /**
@@ -653,8 +652,8 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static renderLayers_(
-    map: PluggableMap,
-    lyr: PluggableMap | LayerGroup,
+    map: OlMap,
+    lyr: OlMap | LayerGroup,
     elm: HTMLElement,
     options: RenderOptions,
     render: (changedLyr: BaseLayer) => void
@@ -677,7 +676,7 @@ export default class LayerSwitcher extends Control {
    * found under `lyr`.
    */
   static forEachRecursive(
-    lyr: PluggableMap | LayerGroup,
+    lyr: OlMap | LayerGroup,
     fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void
   ): void {
     lyr.getLayers().forEach(function (lyr, idx, a) {
@@ -694,13 +693,14 @@ export default class LayerSwitcher extends Control {
    * @returns {String} UUID
    */
   static uuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
-      c
-    ) {
-      const r = (Math.random() * 16) | 0,
-        v = c == 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function (c) {
+        const r = (Math.random() * 16) | 0,
+          v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
   }
 
   /**
@@ -832,6 +832,7 @@ interface RenderOptions {
    * Should the order of layers in the panel be reversed?
    */
   reverse?: boolean;
+  legendInLine?: boolean;
 }
 
 /**
