@@ -542,7 +542,7 @@ var LayerSwitcher = function (_Control) {
                                 serverType: 'qgis'
                             });
                         } else {
-                            var lyrUrl = lyr.getSource().getUrls();
+                            var lyrUrl = lyr.getSource().getUrl();
                             var wmsSource = new ol.source.ImageWMS({
                                 url: lyrUrl[0],
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
@@ -699,22 +699,29 @@ var LayerSwitcher = function (_Control) {
                         // li.appendChild(opWrapper);
                         // console.log('Layer strategy');
                         // console.log(options.layerStrategy);
+
+												console.log('   lyr   ');
+												// console.log(lyr.title);
+												console.log(lyr.get('title'));
+												console.log(typeof lyr);
                         if (options.layerStrategy == "1") {
                             // console.log(lyr.getSource());
                             var lyrUrl = lyr.getSource().getUrl();
                             var wmsSource = new ol.source.ImageWMS({
                                 url: lyrUrl,
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                                params: { 'LAYERS': lyr.Name },
+                                // params: { 'LAYERS': lyr.Name },
+																params: { 'LAYERS': lyr.get('title') },
                                 ratio: 1,
                                 serverType: 'qgis'
                             });
                         } else {
-                            var lyrUrl = lyr.getSource().getUrls();
+                            var lyrUrl = lyr.getSource().getUrl();
                             var wmsSource = new ol.source.ImageWMS({
-                                url: lyrUrl[0],
+                                url: lyrUrl,
                                 // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-                                params: { 'LAYERS': lyr.Name },
+                                // params: { 'LAYERS': lyr.Name },
+																params: { 'LAYERS': lyr.get('title') },
                                 ratio: 1,
                                 serverType: 'qgis'
                             });
@@ -724,12 +731,12 @@ var LayerSwitcher = function (_Control) {
                         console.log(graphicUrl);
 
 												var row = document.createElement('div')
-												row.className = 'row border border-primary rounded';
+												// row.className = 'row border border-primary rounded';
 												var col_leg = document.createElement('div')
 												col_leg.className = 'col-3';
 
                         var _legend = document.createElement('img');
-												_legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
+												// _legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
                         _legend.src = graphicUrl + '&LAYERTITLE=false&RULELABEL=false&LAYER=' + lyr.get('title');
 
 												col_leg.appendChild(_legend)
