@@ -5,6 +5,7 @@ import { Options as ControlOptions } from 'ol/control/Control';
 import OlMap from 'ol/Map';
 import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
+import ImageWMS from 'ol/source/ImageWMS';
 import { Options as OlLayerBaseOptions } from 'ol/layer/Base';
 import { Options as OlLayerGroupOptions } from 'ol/layer/Group';
 
@@ -281,6 +282,7 @@ export default class LayerSwitcher extends Control {
     panel: HTMLElement,
     options: RenderOptions
   ): void {
+    // console.log('---- renderPanel ----');
     // Create the event.
     const render_event = new Event('render');
     // Dispatch the event.
@@ -318,6 +320,7 @@ export default class LayerSwitcher extends Control {
 
     const ul = document.createElement('ul');
     panel.appendChild(ul);
+
     // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
     LayerSwitcher.renderLayers_(
       map,
@@ -517,6 +520,9 @@ export default class LayerSwitcher extends Control {
     options: RenderOptions,
     render: (changedLyr: BaseLayer) => void
   ): HTMLElement {
+    console.log('renderLayer_');
+    // console.log(lyr);
+
     const li = document.createElement('li');
 
     const lyrTitle = lyr.get('title');
@@ -573,13 +579,78 @@ export default class LayerSwitcher extends Control {
 
       LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
     } else {
+      console.log('1 - ADD custom');
+
       li.className = 'layer';
       const input = document.createElement('input');
       if (lyr.get('type') === 'base') {
         input.type = 'radio';
       } else {
         input.type = 'checkbox';
+        console.log('2 - BaseLayer');
+
+        // console.log(lyr.getSource().getUrl());
+        // console.log(lyr.getProperties().source.getUrl());
+        console.log(options);
+
+        // console.log(lyr.getProperties().source.getSource());
+        if (options.legendInLine) {
+          console.log('ADDING legendInLine');
+
+          // Create additional HTML elements
+          const _btn = document.createElement('button');
+          _btn.setAttribute('data-bs-target', '#tg' + checkboxId);
+          _btn.setAttribute('data-bs-toggle', 'collapse');
+          // _btn.setAttribute("style", "overflow: hidden;");
+          _btn.className = 'btn btn-legend btn-xs legend';
+          const icon = document.createElement('i');
+          icon.className = 'fa-solid fa-plus fa-xs';
+
+          _btn.appendChild(icon);
+          li.appendChild(_btn);
+
+          // const lyrUrl = lyr.getSource().getUrl();
+          const lyrUrl = lyr.getProperties().source.getUrl();
+          const wmsSource = new ImageWMS({
+            // const wmsSource = new ol.source.ImageWMS({
+            url: lyrUrl,
+            // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+            params: { LAYERS: lyr.get('title') },
+            ratio: 1,
+            serverType: 'qgis'
+          });
+          const graphicUrl = wmsSource.getLegendUrl();
+          console.log(graphicUrl);
+
+          const row = document.createElement('div');
+          // row.className = 'row border border-primary rounded';
+          const col_leg = document.createElement('div');
+          col_leg.className = 'col-3';
+
+          const _legend = document.createElement('img');
+          // _legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
+          _legend.src =
+            graphicUrl +
+            '&LAYERTITLE=false&RULELABEL=false&LAYER=' +
+            lyr.get('title');
+
+          col_leg.appendChild(_legend);
+
+          // const col_op = document.createElement('div');
+          // col_op.className = 'col-9';
+          //
+          // col_op.appendChild(_opWrap);
+          //
+          row.appendChild(col_leg);
+          // row.appendChild(col_op);
+          //
+          // _opWrapper.appendChild(row);
+
+          li.appendChild(row);
+        }
       }
+
+      // ______________________________________
       input.id = checkboxId;
       input.checked = lyr.get('visible');
       input.indeterminate = lyr.get('indeterminate');
@@ -614,6 +685,7 @@ export default class LayerSwitcher extends Control {
     return li;
   }
 
+  // Customization
   static opacityWidget_(
     checkboxId: number,
     map: OlMap,
@@ -896,4 +968,5 @@ export {
   GroupSelectStyle,
   BaseLayerOptions,
   GroupLayerOptions
+  // ImageWMSOptions
 };
