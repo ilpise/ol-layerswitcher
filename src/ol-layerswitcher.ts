@@ -579,8 +579,7 @@ export default class LayerSwitcher extends Control {
 
       LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
     } else {
-      console.log('1 - ADD custom');
-
+      console.log('1 - Set layer');
       li.className = 'layer';
       const input = document.createElement('input');
       if (lyr.get('type') === 'base') {
@@ -594,92 +593,124 @@ export default class LayerSwitcher extends Control {
         console.log(options);
 
         // console.log(lyr.getProperties().source.getSource());
-        if (options.legendInLine) {
-          console.log('ADDING legendInLine');
-
-          // Create additional HTML elements
-          const _btn = document.createElement('button');
-          _btn.setAttribute('data-bs-target', '#tg' + checkboxId);
-          _btn.setAttribute('data-bs-toggle', 'collapse');
-          // _btn.setAttribute("style", "overflow: hidden;");
-          _btn.className = 'btn btn-legend btn-xs legend';
-          const icon = document.createElement('i');
-          icon.className = 'fa-solid fa-plus fa-xs';
-
-          _btn.appendChild(icon);
-          li.appendChild(_btn);
-
-          // const lyrUrl = lyr.getSource().getUrl();
-          const lyrUrl = lyr.getProperties().source.getUrl();
-          const wmsSource = new ImageWMS({
-            // const wmsSource = new ol.source.ImageWMS({
-            url: lyrUrl,
-            // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
-            params: { LAYERS: lyr.get('title') },
-            ratio: 1,
-            serverType: 'qgis'
-          });
-          const graphicUrl = wmsSource.getLegendUrl();
-          console.log(graphicUrl);
-
-          const row = document.createElement('div');
-          // row.className = 'row border border-primary rounded';
-          const col_leg = document.createElement('div');
-          col_leg.className = 'col-3';
-
-          const _legend = document.createElement('img');
-          // _legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
-          _legend.src =
-            graphicUrl +
-            '&LAYERTITLE=false&RULELABEL=false&LAYER=' +
-            lyr.get('title');
-
-          col_leg.appendChild(_legend);
-
-          // const col_op = document.createElement('div');
-          // col_op.className = 'col-9';
-          //
-          // col_op.appendChild(_opWrap);
-          //
-          row.appendChild(col_leg);
-          // row.appendChild(col_op);
-          //
-          // _opWrapper.appendChild(row);
-
-          li.appendChild(row);
-        }
       }
 
-      // ______________________________________
-      input.id = checkboxId;
-      input.checked = lyr.get('visible');
-      input.indeterminate = lyr.get('indeterminate');
-      input.onchange = function (e) {
-        const target = e.target as HTMLInputElement;
-        LayerSwitcher.setVisible_(
-          map,
-          lyr,
-          target.checked,
-          options.groupSelectStyle
-        );
-        render(lyr);
-      };
-      li.appendChild(input);
+      if (lyr.get('type') !== 'base' && options.legendInLine) {
+        console.log('ADDING legendInLine');
 
-      label.htmlFor = checkboxId;
-      label.innerHTML = lyrTitle;
+        // Create additional HTML elements
+        const _btn = document.createElement('button');
+        _btn.setAttribute('data-bs-target', '#tg' + checkboxId);
+        _btn.setAttribute('data-bs-toggle', 'collapse');
+        // _btn.setAttribute("style", "overflow: hidden;");
+        _btn.className = 'btn btn-legend btn-xs legend';
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-plus fa-xs';
 
-      const rsl = map.getView().getResolution();
-      if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-        label.className += ' disabled';
-      } else if (lyr.getMinZoom && lyr.getMaxZoom) {
-        const zoom = map.getView().getZoom();
-        if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
+        _btn.appendChild(icon);
+        li.appendChild(_btn);
+
+        input.id = checkboxId;
+        input.checked = lyr.get('visible');
+        input.indeterminate = lyr.get('indeterminate');
+        input.onchange = function (e) {
+          const target = e.target as HTMLInputElement;
+          LayerSwitcher.setVisible_(
+            map,
+            lyr,
+            target.checked,
+            options.groupSelectStyle
+          );
+          render(lyr);
+        };
+        li.appendChild(input);
+
+        label.htmlFor = checkboxId;
+        label.innerHTML = lyrTitle;
+
+        const rsl = map.getView().getResolution();
+        if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
           label.className += ' disabled';
+        } else if (lyr.getMinZoom && lyr.getMaxZoom) {
+          const zoom = map.getView().getZoom();
+          if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
+            label.className += ' disabled';
+          }
         }
-      }
 
-      li.appendChild(label);
+        li.appendChild(label);
+
+        // const lyrUrl = lyr.getSource().getUrl();
+        const lyrUrl = lyr.getProperties().source.getUrl();
+        const wmsSource = new ImageWMS({
+          // const wmsSource = new ol.source.ImageWMS({
+          url: lyrUrl,
+          // url: 'http://localhost:8084/cgi-bin/qgis_mapserv.fcgi?map=/var/www/qgs/testVB.qgs',
+          params: { LAYERS: lyr.get('title') },
+          ratio: 1,
+          serverType: 'qgis'
+        });
+        const graphicUrl = wmsSource.getLegendUrl();
+        console.log(graphicUrl);
+
+        const row = document.createElement('div');
+        row.id = 'tg' + checkboxId;
+        // row.className = 'row border border-primary rounded';
+        const col_leg = document.createElement('div');
+        col_leg.className = 'col-3';
+
+        const _legend = document.createElement('img');
+        // _legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
+        _legend.src =
+          graphicUrl +
+          '&LAYERTITLE=false&RULELABEL=false&LAYER=' +
+          lyr.get('title');
+
+        col_leg.appendChild(_legend);
+
+        // const col_op = document.createElement('div');
+        // col_op.className = 'col-9';
+        //
+        // col_op.appendChild(_opWrap);
+        //
+        row.appendChild(col_leg);
+        // row.appendChild(col_op);
+        //
+        // _opWrapper.appendChild(row);
+
+        li.appendChild(row);
+      } else {
+        // ______________________________________
+        input.id = checkboxId;
+        input.checked = lyr.get('visible');
+        input.indeterminate = lyr.get('indeterminate');
+        input.onchange = function (e) {
+          const target = e.target as HTMLInputElement;
+          LayerSwitcher.setVisible_(
+            map,
+            lyr,
+            target.checked,
+            options.groupSelectStyle
+          );
+          render(lyr);
+        };
+        li.appendChild(input);
+
+        label.htmlFor = checkboxId;
+        label.innerHTML = lyrTitle;
+
+        const rsl = map.getView().getResolution();
+        if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+          label.className += ' disabled';
+        } else if (lyr.getMinZoom && lyr.getMaxZoom) {
+          const zoom = map.getView().getZoom();
+          if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
+            label.className += ' disabled';
+          }
+        }
+
+        li.appendChild(label);
+      }
     }
 
     return li;
