@@ -655,7 +655,8 @@ export default class LayerSwitcher extends Control {
 
         const row = document.createElement('div');
         row.id = 'tg' + checkboxId;
-        // row.className = 'row border border-primary rounded';
+        row.className = 'collapse';
+
         const col_leg = document.createElement('div');
         col_leg.className = 'col-3';
 
