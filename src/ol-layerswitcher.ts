@@ -653,9 +653,12 @@ export default class LayerSwitcher extends Control {
         const graphicUrl = wmsSource.getLegendUrl();
         console.log(graphicUrl);
 
+        const legCollapse = document.createElement('div');
+        legCollapse.id = 'tg' + checkboxId;
+        legCollapse.className = 'collapse';
+
         const row = document.createElement('div');
-        row.id = 'tg' + checkboxId;
-        row.className = 'collapse';
+        row.className = 'row';
 
         const col_leg = document.createElement('div');
         col_leg.className = 'col-3';
@@ -675,11 +678,13 @@ export default class LayerSwitcher extends Control {
         // col_op.appendChild(_opWrap);
         //
         row.appendChild(col_leg);
+
+        legCollapse.appendChild(row);
         // row.appendChild(col_op);
         //
         // _opWrapper.appendChild(row);
 
-        li.appendChild(row);
+        li.appendChild(legCollapse);
       } else {
         // ______________________________________
         input.id = checkboxId;
