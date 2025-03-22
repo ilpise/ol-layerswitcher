@@ -1,7 +1,7 @@
 import Control from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import { Options as ControlOptions } from 'ol/control/Control';
-import PluggableMap from 'ol/PluggableMap';
+import OlMap from 'ol/Map';
 import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
 import { Options as OlLayerBaseOptions } from 'ol/layer/Base';
@@ -44,7 +44,7 @@ import { Options as OlLayerGroupOptions } from 'ol/layer/Group';
  * lyr.set('title', 'OpenStreetMap');
  * ```
  *
- * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html#addControl).
+ * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html#addControl).
  * ```javascript
  * var layerSwitcher = new LayerSwitcher({
  *   reverse: true,
@@ -62,6 +62,7 @@ export default class LayerSwitcher extends Control {
     protected startActive: boolean;
     protected groupSelectStyle: 'none' | 'children' | 'group';
     protected reverse: boolean;
+    protected legendInLine: boolean;
     protected label: string;
     protected collapseLabel: string;
     protected tipLabel: string;
@@ -76,7 +77,7 @@ export default class LayerSwitcher extends Control {
      * Set the map instance the control is associated with.
      * @param map The map instance.
      */
-    setMap(map: PluggableMap): void;
+    setMap(map: OlMap): void;
     /**
      * Show the layer panel. Fires `'show'` event.
      * @fires LayerSwitcher#show
@@ -102,28 +103,28 @@ export default class LayerSwitcher extends Control {
      * @param panel The DOM Element into which the layer tree will be rendered
      * @param options Options for panel, group, and layers
      */
-    static renderPanel(map: PluggableMap, panel: HTMLElement, options: RenderOptions): void;
+    static renderPanel(map: OlMap, panel: HTMLElement, options: RenderOptions): void;
     /**
      * **_[static]_** - Determine if a given layer group contains base layers
      * @param grp Group to test
      */
     static isBaseGroup(grp: LayerGroup): boolean;
-    protected static setGroupVisibility(map: PluggableMap): void;
-    protected static setChildVisibility(map: PluggableMap): void;
+    protected static setGroupVisibility(map: OlMap): void;
+    protected static setChildVisibility(map: OlMap): void;
     /**
      * Ensure only the top-most base layer is visible if more than one is visible.
      * @param map The map instance.
      * @param groupSelectStyle
      * @protected
      */
-    protected static ensureTopVisibleBaseLayerShown(map: PluggableMap, groupSelectStyle: GroupSelectStyle): void;
+    protected static ensureTopVisibleBaseLayerShown(map: OlMap, groupSelectStyle: GroupSelectStyle): void;
     /**
      * **_[static]_** - Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
      * contained by the specified map or layer group; optionally filtering via `filterFn`
      * @param grp The map or layer group for which layers are found.
      * @param filterFn Optional function used to filter the returned layers
      */
-    static getGroupsAndLayers(grp: PluggableMap | LayerGroup, filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean): BaseLayer[];
+    static getGroupsAndLayers(grp: OlMap | LayerGroup, filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean): BaseLayer[];
     /**
      * Toggle the visible state of a layer.
      * Takes care of hiding other layers in the same exclusive group if the layer
@@ -135,7 +136,7 @@ export default class LayerSwitcher extends Control {
      * @param groupSelectStyle
      * @protected
      */
-    protected static setVisible_(map: PluggableMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle): void;
+    protected static setVisible_(map: OlMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle): void;
     /**
      * Render all layers that are children of a group.
      * @param map The map instance.
@@ -144,7 +145,8 @@ export default class LayerSwitcher extends Control {
      * @param options Options for groups and layers
      * @protected
      */
-    protected static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: (changedLyr: BaseLayer) => void): HTMLElement;
+    protected static renderLayer_(map: OlMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: (changedLyr: BaseLayer) => void): HTMLElement;
+    static opacityWidget_(checkboxId: number, map: OlMap, lyr: OlMap | LayerGroup): void;
     /**
      * Render all layers that are children of a group.
      * @param map The map instance.
@@ -153,7 +155,7 @@ export default class LayerSwitcher extends Control {
      * @param options Options for groups and layers
      * @protected
      */
-    protected static renderLayers_(map: PluggableMap, lyr: PluggableMap | LayerGroup, elm: HTMLElement, options: RenderOptions, render: (changedLyr: BaseLayer) => void): void;
+    protected static renderLayers_(map: OlMap, lyr: OlMap | LayerGroup, elm: HTMLElement, options: RenderOptions, render: (changedLyr: BaseLayer) => void): void;
     /**
      * **_[static]_** - Call the supplied function for each layer in the passed layer group
      * recursing nested groups.
@@ -161,7 +163,7 @@ export default class LayerSwitcher extends Control {
      * @param fn Callback which will be called for each layer
      * found under `lyr`.
      */
-    static forEachRecursive(lyr: PluggableMap | LayerGroup, fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void): void;
+    static forEachRecursive(lyr: OlMap | LayerGroup, fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void): void;
     /**
      * **_[static]_** - Generate a UUID
      * Adapted from http://stackoverflow.com/a/2117523/526860
@@ -257,6 +259,7 @@ interface RenderOptions {
      * Should the order of layers in the panel be reversed?
      */
     reverse?: boolean;
+    legendInLine?: boolean;
 }
 /**
  * **_[type]_** - How layers and groups behave when a given layer's visibility is set, either:
@@ -264,7 +267,7 @@ interface RenderOptions {
  * - `'children'` (default) groups have a checkbox and affect child visibility or
  * - `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
  */
-declare type GroupSelectStyle = 'none' | 'children' | 'group';
+type GroupSelectStyle = 'none' | 'children' | 'group';
 /**
  * **_[interface]_** - Extended BaseLayer Options interface adding properties
  * used by the LayerSwitcher
