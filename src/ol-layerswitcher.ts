@@ -610,6 +610,7 @@ export default class LayerSwitcher extends Control {
         _btn.appendChild(icon);
         li.appendChild(_btn);
 
+        // ______________COMMON____________________
         input.id = checkboxId;
         input.checked = lyr.get('visible');
         input.indeterminate = lyr.get('indeterminate');
@@ -639,9 +640,16 @@ export default class LayerSwitcher extends Control {
         }
 
         li.appendChild(label);
+        // __________END__COMMON____________________
 
         // const lyrUrl = lyr.getSource().getUrl();
         const lyrUrl = lyr.getProperties().source.getUrl();
+        console.log(lyr.getProperties());
+        const lyrExtent = lyr.getProperties().zoomextent;
+        // const bboxFeature = lyr.getProperties().bboxFeature;
+
+        // const lyrExtent = lyr.getExtent(); // Return the extent of the layer or undefined if it will be visible regardless of extent.
+
         const wmsSource = new ImageWMS({
           // const wmsSource = new ol.source.ImageWMS({
           url: lyrUrl,
@@ -651,11 +659,11 @@ export default class LayerSwitcher extends Control {
           serverType: 'qgis'
         });
         const graphicUrl = wmsSource.getLegendUrl();
-        console.log(graphicUrl);
+        // console.log(graphicUrl);
 
-        const legCollapse = document.createElement('div');
-        legCollapse.id = 'tg' + checkboxId;
-        legCollapse.className = 'collapse';
+        const collapsable = document.createElement('div');
+        collapsable.id = 'tg' + checkboxId;
+        collapsable.className = 'collapse';
 
         const row = document.createElement('div');
         row.className = 'row';
@@ -672,21 +680,45 @@ export default class LayerSwitcher extends Control {
 
         col_leg.appendChild(_legend);
 
-        // const col_op = document.createElement('div');
-        // col_op.className = 'col-9';
-        //
-        // col_op.appendChild(_opWrap);
-        //
+        const col_zc = document.createElement('div');
+        col_zc.className = 'col-9';
+
+        const _zoomto = document.createElement('button');
+        _zoomto.addEventListener(
+          'click',
+          function () {
+            console.log('CLICKED');
+            // console.log(lyrExtent);
+
+            // console.log(map.getView());
+            map.getView().fit(lyrExtent, {
+              size: map.getSize(),
+              duration: 2000,
+              padding: [150, 150, 150, 150]
+            });
+
+            // map.getView().animate(
+            //   // { center: bboxFeature.geometry.coordinates, duration: 1000 },
+            //   { zoom: lyrExtent, duration: 1000 }
+            // );
+            // map.getView().fit()
+            // const feature = source.getFeatures()[1];
+            // const point = feature.getGeometry();
+            // view.fit(point, {padding: [170, 50, 30, 150], minResolution: 50});
+          },
+          false
+        );
+
+        col_zc.appendChild(_zoomto);
+
         row.appendChild(col_leg);
+        row.appendChild(col_zc);
 
-        legCollapse.appendChild(row);
-        // row.appendChild(col_op);
-        //
-        // _opWrapper.appendChild(row);
+        collapsable.appendChild(row);
 
-        li.appendChild(legCollapse);
+        li.appendChild(collapsable);
       } else {
-        // ______________________________________
+        // _______________COMMON____________________
         input.id = checkboxId;
         input.checked = lyr.get('visible');
         input.indeterminate = lyr.get('indeterminate');
@@ -716,6 +748,7 @@ export default class LayerSwitcher extends Control {
         }
 
         li.appendChild(label);
+        // __________END__COMMON____________________
       }
     }
 
