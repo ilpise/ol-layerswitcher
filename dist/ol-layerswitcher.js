@@ -541,12 +541,17 @@ class LayerSwitcher extends Control {
                 // const col_zc = document.createElement('div');
                 // col_zc.className = 'col-9';
                 const _zoomto = document.createElement('button');
-                _zoomto.className = 'btn btn-sm ms-2 align-bottom btn-secondary';
-                const newContent = document.createTextNode('Zoom to layer');
-                // const zicon = document.createElement('i');
-                // zicon.className = 'fa-solid fa-magnifying-glass fa-xs';
-                // _zoomto.appendChild(zicon);
-                _zoomto.appendChild(newContent);
+                // Button
+                // _zoomto.className = 'btn btn-sm ms-2 align-bottom btn-secondary';
+                // const newContent = document.createTextNode('Zoom to layer');
+                // _zoomto.appendChild(newContent);
+                // Icon
+                _zoomto.className =
+                    'btn btn-outline-secondary btn-sm ms-2 align-bottom';
+                _zoomto.setAttribute('title', 'Zoom to layer extent');
+                const zicon = document.createElement('i');
+                zicon.className = 'fa-solid fa-expand fa-xs';
+                _zoomto.appendChild(zicon);
                 _zoomto.addEventListener('click', function () {
                     console.log('CLICKED');
                     // console.log(lyrExtent);
