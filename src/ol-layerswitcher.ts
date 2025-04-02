@@ -520,7 +520,7 @@ export default class LayerSwitcher extends Control {
     options: RenderOptions,
     render: (changedLyr: BaseLayer) => void
   ): HTMLElement {
-    console.log('renderLayer_');
+    // console.log('renderLayer_');
     // console.log(lyr);
 
     const li = document.createElement('li');
@@ -579,24 +579,17 @@ export default class LayerSwitcher extends Control {
 
       LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
     } else {
-      console.log('1 - Set layer');
+      // console.log('1 - Set layer');
       li.className = 'layer';
       const input = document.createElement('input');
       if (lyr.get('type') === 'base') {
         input.type = 'radio';
       } else {
         input.type = 'checkbox';
-        console.log('2 - BaseLayer');
-
-        // console.log(lyr.getSource().getUrl());
-        // console.log(lyr.getProperties().source.getUrl());
-        console.log(options);
-
-        // console.log(lyr.getProperties().source.getSource());
       }
 
       if (lyr.get('type') !== 'base' && options.legendInLine) {
-        console.log('ADDING legendInLine');
+        // console.log('ADDING legendInLine');
 
         // Create additional HTML elements
         const _btn = document.createElement('button');
@@ -624,6 +617,8 @@ export default class LayerSwitcher extends Control {
           );
           render(lyr);
         };
+        // Add margin between chckbox and layer title
+        input.className = 'me-2';
         li.appendChild(input);
 
         label.htmlFor = checkboxId;
@@ -644,7 +639,7 @@ export default class LayerSwitcher extends Control {
 
         // const lyrUrl = lyr.getSource().getUrl();
         const lyrUrl = lyr.getProperties().source.getUrl();
-        console.log(lyr.getProperties());
+        // console.log(lyr.getProperties());
         const lyrExtent = lyr.getProperties().zoomextent;
         // const bboxFeature = lyr.getProperties().bboxFeature;
 
@@ -666,10 +661,10 @@ export default class LayerSwitcher extends Control {
         collapsable.className = 'collapse';
 
         const row = document.createElement('div');
-        row.className = 'row';
+        row.className = 'row  ms-5';
 
         const col_leg = document.createElement('div');
-        col_leg.className = 'col-3';
+        col_leg.className = 'col-12';
 
         const _legend = document.createElement('img');
         // _legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
@@ -677,13 +672,21 @@ export default class LayerSwitcher extends Control {
           graphicUrl +
           '&LAYERTITLE=false&RULELABEL=false&LAYER=' +
           lyr.get('title');
+        _legend.className = 'object-fit-cover';
 
         col_leg.appendChild(_legend);
 
-        const col_zc = document.createElement('div');
-        col_zc.className = 'col-9';
+        // const col_zc = document.createElement('div');
+        // col_zc.className = 'col-9';
 
         const _zoomto = document.createElement('button');
+        _zoomto.className = 'btn btn-sm ms-2 align-bottom btn-secondary';
+        const newContent = document.createTextNode('Zoom to layer');
+        // const zicon = document.createElement('i');
+        // zicon.className = 'fa-solid fa-magnifying-glass fa-xs';
+        // _zoomto.appendChild(zicon);
+        _zoomto.appendChild(newContent);
+
         _zoomto.addEventListener(
           'click',
           function () {
@@ -709,10 +712,11 @@ export default class LayerSwitcher extends Control {
           false
         );
 
-        col_zc.appendChild(_zoomto);
+        // col_zc.appendChild(_zoomto);
+        col_leg.appendChild(_zoomto);
 
         row.appendChild(col_leg);
-        row.appendChild(col_zc);
+        // row.appendChild(col_zc);
 
         collapsable.appendChild(row);
 
