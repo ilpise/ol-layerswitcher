@@ -63,6 +63,7 @@ export default class LayerSwitcher extends Control {
     protected groupSelectStyle: 'none' | 'children' | 'group';
     protected reverse: boolean;
     protected legendInLine: boolean;
+    protected zoomToLayer: boolean;
     protected label: string;
     protected collapseLabel: string;
     protected tipLabel: string;
@@ -260,6 +261,7 @@ interface RenderOptions {
      */
     reverse?: boolean;
     legendInLine?: boolean;
+    zoomToLayer?: boolean;
 }
 /**
  * **_[type]_** - How layers and groups behave when a given layer's visibility is set, either:
