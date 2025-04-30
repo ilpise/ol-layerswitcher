@@ -668,10 +668,15 @@ export default class LayerSwitcher extends Control {
 
         const _legend = document.createElement('img');
         // _legend.setAttribute("style", "width:1.5rem; object-fit: contain;");
+        // _legend.src =
+        //   graphicUrl +
+        //   '&LAYERTITLE=false&RULELABEL=false&LAYER=' +
+        //   lyr.get('title');
         _legend.src =
           graphicUrl +
-          '&LAYERTITLE=false&RULELABEL=false&LAYER=' +
+          '&LAYERTITLE=false&ITEMFONTFAMILY=monospace&LAYER=' +
           lyr.get('title');
+
         _legend.className = 'object-fit-cover';
 
         col_leg.appendChild(_legend);
