@@ -71,6 +71,7 @@ export default class LayerSwitcher extends Control {
   protected groupSelectStyle: 'none' | 'children' | 'group';
   protected reverse: boolean;
   protected legendInLine: boolean;
+  protected zoomToLayer: boolean;
   protected label: string;
   protected collapseLabel: string;
   protected tipLabel: string;
@@ -113,6 +114,7 @@ export default class LayerSwitcher extends Control {
     this.reverse = options.reverse !== false;
 
     this.legendInLine = options.legendInLine !== false;
+    this.zoomToLayer = options.zoomToLayer !== false;
 
     this.mapListeners = [];
 
@@ -265,6 +267,7 @@ export default class LayerSwitcher extends Control {
     LayerSwitcher.renderPanel(this.getMap(), this.panel, {
       groupSelectStyle: this.groupSelectStyle,
       legendInLine: this.legendInLine,
+      zoomToLayer: this.zoomToLayer,
       // layerStrategy: this.layerStrategy,
       reverse: this.reverse
     });
@@ -588,14 +591,15 @@ export default class LayerSwitcher extends Control {
         input.type = 'checkbox';
       }
 
-      if (lyr.get('type') !== 'base' && options.legendInLine) {
-        // console.log('ADDING legendInLine');
+      if (lyr.get('type') !== 'base' && options.legendInLine === true) {
+        console.log('ADDING legendInLine');
+        console.log(options.legendInLine);
 
         // Create additional HTML elements
         const _btn = document.createElement('button');
         _btn.setAttribute('data-bs-target', '#tg' + checkboxId);
         _btn.setAttribute('data-bs-toggle', 'collapse');
-        // _btn.setAttribute("style", "overflow: hidden;");
+        _btn.setAttribute('style', 'background: none;');
         _btn.className = 'btn btn-legend btn-xs legend';
         const icon = document.createElement('i');
         icon.className = 'fa-solid fa-plus fa-xs';
@@ -608,6 +612,7 @@ export default class LayerSwitcher extends Control {
         input.checked = lyr.get('visible');
         input.indeterminate = lyr.get('indeterminate');
         input.onchange = function (e) {
+          // e.preventDefault();
           const target = e.target as HTMLInputElement;
           LayerSwitcher.setVisible_(
             map,
@@ -684,47 +689,49 @@ export default class LayerSwitcher extends Control {
         // const col_zc = document.createElement('div');
         // col_zc.className = 'col-9';
 
-        const _zoomto = document.createElement('button');
-        // Button
-        // _zoomto.className = 'btn btn-sm ms-2 align-bottom btn-secondary';
-        // const newContent = document.createTextNode('Zoom to layer');
-        // _zoomto.appendChild(newContent);
-        // Icon
-        _zoomto.className =
-          'btn btn-outline-secondary btn-sm ms-2 align-bottom';
-        _zoomto.setAttribute('title', 'Zoom to layer extent');
-        const zicon = document.createElement('i');
-        zicon.className = 'fa-solid fa-expand fa-xs';
-        _zoomto.appendChild(zicon);
+        if (options.zoomToLayer === true) {
+          const _zoomto = document.createElement('button');
+          // Button
+          // _zoomto.className = 'btn btn-sm ms-2 align-bottom btn-secondary';
+          // const newContent = document.createTextNode('Zoom to layer');
+          // _zoomto.appendChild(newContent);
+          // Icon
+          _zoomto.className =
+            'btn btn-outline-secondary btn-sm ms-2 align-bottom';
+          _zoomto.setAttribute('title', 'Zoom to layer extent');
+          const zicon = document.createElement('i');
+          zicon.className = 'fa-solid fa-expand fa-xs';
+          zicon.setAttribute('data-fa-transform', 'down-6');
+          _zoomto.appendChild(zicon);
 
-        _zoomto.addEventListener(
-          'click',
-          function () {
-            console.log('CLICKED');
-            // console.log(lyrExtent);
+          _zoomto.addEventListener(
+            'click',
+            function () {
+              console.log('CLICKED');
+              // console.log(lyrExtent);
 
-            // console.log(map.getView());
-            map.getView().fit(lyrExtent, {
-              size: map.getSize(),
-              duration: 2000,
-              padding: [150, 150, 150, 150]
-            });
+              // console.log(map.getView());
+              map.getView().fit(lyrExtent, {
+                size: map.getSize(),
+                duration: 2000,
+                padding: [150, 150, 150, 150]
+              });
 
-            // map.getView().animate(
-            //   // { center: bboxFeature.geometry.coordinates, duration: 1000 },
-            //   { zoom: lyrExtent, duration: 1000 }
-            // );
-            // map.getView().fit()
-            // const feature = source.getFeatures()[1];
-            // const point = feature.getGeometry();
-            // view.fit(point, {padding: [170, 50, 30, 150], minResolution: 50});
-          },
-          false
-        );
+              // map.getView().animate(
+              //   // { center: bboxFeature.geometry.coordinates, duration: 1000 },
+              //   { zoom: lyrExtent, duration: 1000 }
+              // );
+              // map.getView().fit()
+              // const feature = source.getFeatures()[1];
+              // const point = feature.getGeometry();
+              // view.fit(point, {padding: [170, 50, 30, 150], minResolution: 50});
+            },
+            false
+          );
 
-        // col_zc.appendChild(_zoomto);
-        col_leg.appendChild(_zoomto);
-
+          // col_zc.appendChild(_zoomto);
+          col_leg.appendChild(_zoomto);
+        }
         row.appendChild(col_leg);
         // row.appendChild(col_zc);
 
@@ -989,6 +996,7 @@ interface RenderOptions {
    */
   reverse?: boolean;
   legendInLine?: boolean;
+  zoomToLayer?: boolean;
 }
 
 /**
