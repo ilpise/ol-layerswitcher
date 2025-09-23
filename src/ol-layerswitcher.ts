@@ -736,14 +736,24 @@ export default class LayerSwitcher extends Control {
           col_leg.appendChild(_zoomto);
         }
 
+        row.appendChild(col_leg);
+        // row.appendChild(col_zc);
+
+        collapsable.appendChild(row);
+
         if (options.layerOpacity === true) {
           // OPACITY WIDGET
-          const opWrapper = document.createElement('div');
-          opWrapper.id = 'tg' + checkboxId;
-          opWrapper.className = 'collapse';
+          const row_op = document.createElement('div');
+          row_op.className = 'row  ms-5 mt-2';
+
+          const col_op = document.createElement('div');
+          col_op.className = 'col-12';
 
           const opWrap = document.createElement('div');
+          opWrap.className = 'd-flex align-items-center';
           const _opacity = document.createElement('input');
+          // _opacity.className = 'form-range flex-grow-1';
+          _opacity.className = 'form-range';
           _opacity.type = 'range';
           _opacity.min = '0';
           _opacity.max = '1';
@@ -771,18 +781,25 @@ export default class LayerSwitcher extends Control {
           );
 
           const opLabel = document.createElement('label');
+          opLabel.className = 'form-label me-2 small mb-0 text-dark';
           opLabel.innerHTML = 'Opacity';
-          opWrap.appendChild(_opacity);
-          opWrap.appendChild(opLabel);
 
-          opWrapper.appendChild(opWrap);
-          col_leg.appendChild(opWrapper);
+          opWrap.appendChild(opLabel);
+          opWrap.appendChild(_opacity);
+
+          // opWrapper.appendChild(opWrap);
+          // col_leg.appendChild(opWrap);
+          col_op.appendChild(opWrap);
+          row_op.appendChild(col_op);
+          collapsable.appendChild(row_op);
           // END OPACITY WIDGET
         }
-        row.appendChild(col_leg);
-        // row.appendChild(col_zc);
 
-        collapsable.appendChild(row);
+        // row.appendChild(col_leg);
+        // // row.appendChild(col_zc);
+        //
+        //
+        // collapsable.appendChild(row);
 
         li.appendChild(collapsable);
       } else {
