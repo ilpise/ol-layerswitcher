@@ -85,6 +85,7 @@ class LayerSwitcher extends Control {
         this.reverse = options.reverse !== false;
         this.legendInLine = options.legendInLine !== false;
         this.zoomToLayer = options.zoomToLayer !== false;
+        this.layerOpacity = options.layerOpacity !== false;
         this.mapListeners = [];
         this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
         if (LayerSwitcher.isTouchDevice_()) {
@@ -221,6 +222,7 @@ class LayerSwitcher extends Control {
             groupSelectStyle: this.groupSelectStyle,
             legendInLine: this.legendInLine,
             zoomToLayer: this.zoomToLayer,
+            layerOpacity: this.layerOpacity,
             // layerStrategy: this.layerStrategy,
             reverse: this.reverse
         });
@@ -472,8 +474,8 @@ class LayerSwitcher extends Control {
                 input.type = 'checkbox';
             }
             if (lyr.get('type') !== 'base' && options.legendInLine === true) {
-                console.log('ADDING legendInLine');
-                console.log(options.legendInLine);
+                //console.log('ADDING legendInLine');
+                //console.log(options.legendInLine);
                 // Create additional HTML elements
                 const _btn = document.createElement('button');
                 _btn.setAttribute('data-bs-target', '#tg' + checkboxId);
@@ -586,6 +588,54 @@ class LayerSwitcher extends Control {
                 row.appendChild(col_leg);
                 // row.appendChild(col_zc);
                 collapsable.appendChild(row);
+                if (options.layerOpacity === true) {
+                    // OPACITY WIDGET
+                    const row_op = document.createElement('div');
+                    row_op.className = 'row  ms-5';
+                    const col_op = document.createElement('div');
+                    col_op.className = 'col-12';
+                    const opWrap = document.createElement('div');
+                    opWrap.className = 'd-flex align-items-center';
+                    const _opacity = document.createElement('input');
+                    // _opacity.className = 'form-range flex-grow-1';
+                    _opacity.className = 'form-range';
+                    _opacity.type = 'range';
+                    _opacity.min = '0';
+                    _opacity.max = '1';
+                    _opacity.step = '0.1';
+                    _opacity.setAttribute('style', 'display:inline; width: 33%;');
+                    _opacity.name = checkboxId;
+                    _opacity.value = String(lyr.get('opacity'));
+                    // _opacity.onchange = function (e) {
+                    //   console.log(e);
+                    //   // LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                    // };
+                    _opacity.addEventListener('input', function () {
+                        console.log('INPUT UPDATE');
+                        const opacity = parseFloat(_opacity.value);
+                        console.log(opacity);
+                        lyr.setOpacity(opacity);
+                        // osm.setOpacity(opacity);
+                        // LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+                        // opacityOutput.innerText = opacity.toFixed(2);
+                    }, false);
+                    const opLabel = document.createElement('label');
+                    opLabel.className = 'form-label me-2 small mb-0 text-dark';
+                    opLabel.innerHTML = 'Opacity';
+                    opWrap.appendChild(opLabel);
+                    opWrap.appendChild(_opacity);
+                    // opWrapper.appendChild(opWrap);
+                    // col_leg.appendChild(opWrap);
+                    col_op.appendChild(opWrap);
+                    row_op.appendChild(col_op);
+                    collapsable.appendChild(row_op);
+                    // END OPACITY WIDGET
+                }
+                // row.appendChild(col_leg);
+                // // row.appendChild(col_zc);
+                //
+                //
+                // collapsable.appendChild(row);
                 li.appendChild(collapsable);
             }
             else {
@@ -618,29 +668,34 @@ class LayerSwitcher extends Control {
         return li;
     }
     // Customization
-    static opacityWidget_(checkboxId, map, lyr) {
-        const opWrapper = document.createElement('div');
-        opWrapper.id = 'tg' + checkboxId;
-        opWrapper.className = 'collapse';
-        const opWrap = document.createElement('div');
-        const opacity = document.createElement('input');
-        opacity.type = 'range';
-        opacity.min = '0';
-        opacity.max = '1';
-        opacity.step = '0.1';
-        opacity.setAttribute('style', 'display:inline; width: 33%;');
-        opacity.name = String(checkboxId);
-        opacity.value = String(lyr.get('opacity'));
-        // opacity.onchange = function (e) {
-        //   LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
-        // };
-        const opLabel = document.createElement('label');
-        opLabel.innerHTML = 'Opacity';
-        opWrap.appendChild(opacity);
-        opWrap.appendChild(opLabel);
-        opWrapper.appendChild(opWrap);
-        // return opWrapper;
-    }
+    // static opacityWidget_(
+    //   checkboxId: number,
+    //   map: OlMap,
+    //   lyr: OlMap | LayerGroup
+    // ): void {
+    //   const opWrapper = document.createElement('div');
+    //   opWrapper.id = 'tg' + checkboxId;
+    //   opWrapper.className = 'collapse';
+    //
+    //   const opWrap = document.createElement('div');
+    //   const opacity = document.createElement('input');
+    //   opacity.type = 'range';
+    //   opacity.min = '0';
+    //   opacity.max = '1';
+    //   opacity.step = '0.1';
+    //   opacity.setAttribute('style', 'display:inline; width: 33%;');
+    //   opacity.name = String(checkboxId);
+    //   opacity.value = String(lyr.get('opacity'));
+    //   // opacity.onchange = function (e) {
+    //   //   LayerSwitcher.setOpacity_(map, lyr, e.target, options.groupSelectStyle);
+    //   // };
+    //   const opLabel = document.createElement('label');
+    //   opLabel.innerHTML = 'Opacity';
+    //   opWrap.appendChild(opacity);
+    //   opWrap.appendChild(opLabel);
+    //   opWrapper.appendChild(opWrap);
+    //   // return opWrapper;
+    // }
     /**
      * Render all layers that are children of a group.
      * @param map The map instance.

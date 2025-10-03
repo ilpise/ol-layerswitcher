@@ -64,6 +64,7 @@ export default class LayerSwitcher extends Control {
     protected reverse: boolean;
     protected legendInLine: boolean;
     protected zoomToLayer: boolean;
+    protected layerOpacity: boolean;
     protected label: string;
     protected collapseLabel: string;
     protected tipLabel: string;
@@ -147,7 +148,6 @@ export default class LayerSwitcher extends Control {
      * @protected
      */
     protected static renderLayer_(map: OlMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: (changedLyr: BaseLayer) => void): HTMLElement;
-    static opacityWidget_(checkboxId: number, map: OlMap, lyr: OlMap | LayerGroup): void;
     /**
      * Render all layers that are children of a group.
      * @param map The map instance.
@@ -262,6 +262,7 @@ interface RenderOptions {
     reverse?: boolean;
     legendInLine?: boolean;
     zoomToLayer?: boolean;
+    layerOpacity?: boolean;
 }
 /**
  * **_[type]_** - How layers and groups behave when a given layer's visibility is set, either:
